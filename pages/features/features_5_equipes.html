@@ -1,0 +1,1776 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+    <meta charset="UTF-8">
+    <title>Matrice des User Stories du Projet (Module &gt; Epic &gt; US)</title>
+    <link rel="icon" type="image/jpg" href="../../assets/images/Redmine_icon.jpg">
+
+    <!-- Scripts de protection d'accès -->
+    <script src="../../assets/js/auth-guard.js"></script>
+    <script src="../../assets/js/admin-guard.js"></script>
+    <style>
+      /* Styles généraux */
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 20px;
+        background-color: #f4f4f9;
+      }
+      h1 {
+        border-bottom: 2px solid #ccc;
+        padding-bottom: 10px;
+      }
+      /* Boutons de contrôle */
+      .controls {
+        margin-bottom: 20px;
+      }
+      .controls button {
+        padding: 8px 15px;
+        margin-right: 10px;
+        cursor: pointer;
+        background-color: #5bc0de;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+      }
+      .controls button:hover {
+        background-color: #31b0d5;
+      }
+      /* Styles des Modules (Niveau 1) */
+      .toggle-module-header {
+        background-color: #343a40; /* Couleur sombre principale */
+        color: white;
+        padding: 15px;
+        margin: 15px 0 0;
+        cursor: pointer;
+        border-radius: 5px;
+        font-size: 1.5em;
+        user-select: none;
+      }
+
+      /* Styles des Epics (Niveau 2) */
+      .toggle-epic-header {
+        background-color: #e9ecef; /* Couleur claire secondaire */
+        color: #343a40;
+        padding: 10px 15px;
+        margin: 10px 0 5px 20px;
+        cursor: pointer;
+        border-left: 5px solid #007bff;
+        font-size: 1.2em;
+        user-select: none;
+        display: flex; /* Permet l'alignement du code/titre */
+        align-items: center;
+      }
+      /* Style spécifique pour le code de l'Epic */
+      .epic-code-tag {
+        font-weight: bold;
+        color: #007bff; /* Bleu pour le code */
+        background-color: #dbeaff;
+        padding: 2px 8px;
+        border-radius: 3px;
+        margin-right: 15px;
+        font-size: 0.9em;
+        flex-shrink: 0;
+      }
+      /* Contenu des User Stories (Niveau 3) */
+      .epic-content-list {
+        list-style-type: none;
+        padding-left: 40px;
+        margin-top: 0;
+      }
+
+      /* Transitions et gestion de la réduction (Level 1 et Level 2) */
+      .module-content-wrapper,
+      .epic-content-list {
+        transition: max-height 0.3s ease-in-out, opacity 0.3s;
+        overflow: hidden;
+        max-height: 5000px; /* Grande valeur pour déploiement */
+        opacity: 1;
+      }
+
+      /* MODULE RÉDUIT (Level 1): masque tous les Epics et US qu'il contient */
+      .module-container.collapsed .module-content-wrapper {
+        max-height: 0;
+        opacity: 0;
+        padding: 0;
+        margin: 0;
+      }
+
+      /* EPIC RÉDUIT (Level 2): masque toutes les User Stories */
+      .epic-container.collapsed .epic-content-list {
+        max-height: 0;
+        opacity: 0;
+        padding: 0;
+        margin: 0;
+      }
+      .user-story {
+        background-color: white;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin: 5px 0 5px 20px;
+        border-radius: 3px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.95em;
+      }
+
+      /* Conteneur pour le code US et le titre US */
+      .us-details-group {
+        display: flex;
+        align-items: center;
+        /* Permet au groupe de prendre le plus d'espace possible à gauche du tag Complexité */
+        flex-grow: 1;
+      }
+
+      /* Style spécifique pour le code de l'US */
+      .us-code-tag {
+        font-weight: bold;
+        color: #495057; /* Gris foncé pour le code US */
+        min-width: 100px; /* Assure un alignement visuel plus propre */
+        margin-right: 10px;
+        flex-shrink: 0;
+        text-align: left; /* Assure l'alignement du code */
+      }
+
+      /* Style pour le titre US (qui doit rester aligné à gauche) */
+      .us-title {
+        text-align: left; /* Force l'alignement à gauche */
+        flex-grow: 1; /* Permet au titre de prendre l'espace restant */
+      }
+      .complexity-tag {
+        font-weight: bold;
+        padding: 4px 10px; /* Augmenté légèrement pour le mot complet */
+        border-radius: 3px;
+        margin-left: 10px;
+        color: white;
+        font-size: 0.8em;
+        flex-shrink: 0;
+      }
+      .c-basse {
+        background-color: #28a745;
+        color: white;
+      }
+      .c-moyenne {
+        background-color: #ffc107;
+        color: white;
+      }
+      .c-elevee {
+        background-color: #dc3545;
+        color: white;
+      }
+      .legend {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        margin: 15px 0 25px;
+        font-size: 0.85em;
+      }
+      .legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .legend .chip {
+        width: 16px;
+        height: 16px;
+        border-radius: 3px;
+        display: inline-block;
+      }
+      .legend .basse {
+        background: #28a745;
+      }
+      .legend .moyenne {
+        background: #ffc107;
+      }
+      .legend .elevee {
+        background: #dc3545;
+      }
+      /* Icônes */
+      .icon {
+        display: inline-block;
+        margin-right: 10px;
+        transition: transform 0.2s;
+      }
+
+      /* L'icône pointe à droite (réduit) */
+      .module-container.collapsed .toggle-module-header .icon,
+      .epic-container.collapsed .toggle-epic-header .icon {
+        transform: rotate(-90deg);
+      }
+      /* Lien Accueil */
+      .home-link {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+        font-size: 0.95em;
+        font-weight: 600;
+        text-decoration: none;
+        color: #495057;
+        padding: 8px 15px;
+        border-radius: 20px;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s ease-in-out;
+      }
+      .home-link:hover {
+        background-color: #e9ecef;
+        color: #007bff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        transform: translateY(-1px);
+      }
+
+      /* Footer */
+      footer {
+        margin-top: 50px;
+        border-top: 1px solid #ccc;
+        padding-top: 10px;
+      }
+      footer p {
+        margin: 10px 0 0 0;
+        font-size: 0.8em;
+        color: #000000;
+        text-align: center;
+      }
+
+      /* Lien de téléchargement */
+      .download-link {
+        text-align: center;
+        margin-top: -5px;
+        margin-bottom: 20px;
+      }
+      .download-link a {
+        display: inline-block;
+        padding: 5px 10px;
+        background-color: #4169e1;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        font-size: 0.9em;
+      }
+      .search-bar {
+        margin: 10px 0 20px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .search-bar input {
+        padding: 8px 12px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        min-width: 280px;
+        font-size: 0.9em;
+      }
+      .filter-select {
+        padding: 8px 10px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 0.9em;
+      }
+      .hidden {
+        display: none !important;
+      }
+
+      /* Option pour les petits écrans (discrétion) */
+      @media screen and (max-width: 768px) {
+        .home-link {
+          font-size: 0.85em;
+          padding: 5px 10px;
+          top: 10px;
+          left: 10px;
+        }
+      }
+
+      /* ================================== */
+      /* === STYLES DU PANNEAU ENSEIGNANT === */
+      /* ================================== */
+
+      .admin-panel {
+        margin-top: 40px;
+        padding: 20px;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      .admin-panel h3 {
+        margin-top: 0;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 10px;
+        color: #495057;
+      }
+
+      .admin-panel-controls {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .admin-panel-controls label {
+        font-weight: bold;
+        color: #343a40;
+      }
+
+      .admin-panel-controls select {
+        padding: 8px 12px;
+        font-size: 1em;
+        border-radius: 4px;
+        border: 1px solid #ced4da;
+      }
+
+      .admin-panel-controls button {
+        padding: 10px 20px;
+        font-size: 1em;
+        font-weight: bold;
+        color: white;
+        background-color: #28a745;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .admin-panel-controls button:hover {
+        background-color: #218838;
+      }
+
+      /* Styles pour les stats dans le fichier généré */
+      .stats-container {
+        margin-bottom: 30px;
+        background-color: #ffffff;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+      }
+
+      .stats-header {
+        background-color: #e9ecef;
+        color: #343a40;
+        padding: 15px;
+        cursor: pointer;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        font-size: 1.2em;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+      }
+
+      .stats-content {
+        padding: 20px;
+        transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+        overflow: hidden;
+      }
+
+      .stats-grid {
+        display: flex;
+        justify-content: space-around;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .stat-card {
+        padding: 15px;
+        border-radius: 5px;
+        width: 30%;
+        color: white;
+      }
+
+      .stat-value {
+        font-size: 2em;
+        font-weight: bold;
+      }
+
+      .stat-label {
+        margin-top: 5px;
+        font-size: 0.9em;
+      }
+
+      .module-color {
+        background-color: #495057;
+      }
+      .epic-color {
+        background-color: #17a2b8;
+      }
+      .us-color {
+        background-color: #28a745;
+      }
+
+      .stats-grid-teams {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 20px;
+        justify-content: flex-start;
+      }
+
+      .team-card {
+        padding: 12px 15px;
+        border-radius: 5px;
+        min-width: 150px;
+        flex-grow: 1;
+        text-align: center;
+        color: white;
+        font-weight: bold;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .team-card-label {
+        font-size: 0.9em;
+        opacity: 0.8;
+      }
+
+      .team-card-value {
+        font-size: 1.5em;
+        margin-top: 5px;
+        line-height: 1;
+      }
+
+      .complexity-summary-cards {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .complexity-card {
+        padding: 12px 15px;
+        border-radius: 5px;
+        min-width: 150px;
+        flex-grow: 1;
+        text-align: center;
+        color: white;
+        font-weight: bold;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .complexity-card.c1 {
+        background-color: #20c997;
+      }
+      .complexity-card.c2 {
+        background-color: #fd7e14;
+      }
+
+      .complexity-card-value {
+        font-size: 1.4em;
+        line-height: 1;
+      }
+
+      .complexity-card-label {
+        font-size: 0.8em;
+        margin-top: 4px;
+        opacity: 0.9;
+      }
+
+      .team-tag {
+        font-weight: bold;
+        padding: 4px 10px;
+        border-radius: 3px;
+        margin-left: 10px;
+        background-color: #007bff;
+        color: white;
+        font-size: 0.8em;
+        flex-shrink: 0;
+      }
+
+      .filters-bar {
+        margin-bottom: 20px;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .filters-bar strong {
+        margin-right: 10px;
+        flex-shrink: 0;
+      }
+
+      .filters-bar button {
+        padding: 8px 15px;
+        margin-right: 10px;
+        cursor: pointer;
+        background-color: #6c757d;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+      }
+
+      .filters-bar button:hover {
+        background-color: #5a6268;
+      }
+
+      .filters-bar button.active {
+        background-color: #007bff;
+      }
+
+      .filters-bar select {
+        background-color: white;
+        color: #333;
+        border: 1px solid #ccc;
+        height: 35px;
+        min-width: 130px;
+        padding: 5px 10px;
+        border-radius: 4px;
+      }
+
+      #export-csv-btn {
+        background-color: #ffc107;
+        color: black;
+        font-weight: bold;
+        margin-left: auto;
+      }
+
+      .user-story.hidden-by-filter,
+      .user-story.hidden-by-search {
+        display: none;
+      }
+
+      .module-container.hidden-by-search,
+      .epic-container.hidden-by-search {
+        display: none;
+      }
+    </style>
+  <script id="druide-verification-office" src="moz-extension://31e50696-1537-44d6-8238-3785e9287754/antidote-office.js"></script><script src="moz-extension://60db014f-0a12-46c7-83c1-fb2490a9e284/assets/prompt.js"></script><style type="text/css">
+            .team-tag {
+                font-weight: bold;
+                padding: 4px 10px;
+                border-radius: 3px;
+                margin-left: 10px;
+                background-color: #007bff; 
+                color: white;
+                font-size: 0.8em;
+                flex-shrink: 0;
+            }
+            
+            .filters-bar {
+                margin-bottom: 20px;
+                padding: 10px;
+                background-color: #f8f9fa;
+                border: 1px solid #e9ecef;
+                border-radius: 5px;
+                display: flex; 
+                align-items: center;
+                flex-wrap: wrap; 
+            }
+            .filters-bar strong {
+                margin-right: 10px;
+                flex-shrink: 0;
+            }
+            .filters-bar button, .filters-bar select {
+                padding: 8px 15px;
+                margin-right: 10px;
+                cursor: pointer;
+                background-color: #6c757d; 
+                color: white;
+                border: none;
+                border-radius: 4px;
+                transition: background-color 0.3s;
+            }
+            .filters-bar button:hover {
+                background-color: #5a6268;
+            }
+            .filters-bar button.active {
+                background-color: #007bff; 
+            }
+            #export-csv-btn {
+                background-color: #ffc107; 
+                color: black;
+                font-weight: bold;
+                margin-left: auto; 
+            }
+            .filters-bar select {
+                background-color: white;
+                color: #333;
+                border: 1px solid #ccc;
+                height: 35px; 
+                min-width: 130px;
+            }
+
+            .user-story.hidden-by-filter,
+            .user-story.hidden-by-search {
+                display: none;
+            }
+            
+            .stats-container {
+                margin-bottom: 30px;
+                background-color: #ffffff;
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+            }
+            
+            .stats-header {
+                background-color: #e9ecef;
+                color: #343a40;
+                padding: 15px;
+                cursor: pointer;
+                border-top-left-radius: 8px;
+                border-top-right-radius: 8px;
+                font-size: 1.2em;
+                font-weight: bold;
+                display: flex;
+                align-items: center;
+            }
+            
+            .stats-header .icon {
+                margin-right: 10px;
+            }
+
+            .stats-content {
+                padding: 20px;
+                transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+                overflow: hidden;
+            }
+            
+            .stats-container.collapsed .stats-content {
+                max-height: 0;
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+            .stats-container.collapsed .stats-header {
+                border-radius: 8px; 
+            }
+            .stats-container.collapsed .stats-header .icon::before {
+                content: '►'; 
+            }
+            
+            .stats-header .icon::before {
+                content: '▼'; 
+            }
+            
+            .stats-grid {
+                display: flex;
+                justify-content: space-around;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+            .stat-card {
+                padding: 15px;
+                border-radius: 5px;
+                width: 30%;
+                color: white;
+            }
+            .stat-value {
+                font-size: 2em;
+                font-weight: bold;
+            }
+            
+            .module-color { background-color: #495057; }
+            .epic-color { background-color: #17a2b8; }
+            .us-color { background-color: #28a745; }
+            
+            .stats-grid-teams {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 15px;
+                margin-bottom: 20px;
+                justify-content: flex-start;
+            }
+            
+            .team-card {
+                padding: 12px 15px;
+                border-radius: 5px;
+                min-width: 150px;
+                flex-grow: 1;
+                text-align: center;
+                color: white;
+                font-weight: bold;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .team-card-label {
+                font-size: 0.9em;
+                opacity: 0.8;
+            }
+            .team-card-value {
+                font-size: 1.5em;
+                margin-top: 5px;
+                line-height: 1;
+            }
+            
+            .complexity-summary-cards {
+                display: flex;
+                gap: 15px;
+                margin-bottom: 20px;
+            }
+            .complexity-card {
+                padding: 12px 15px;
+                border-radius: 5px;
+                min-width: 150px;
+                flex-grow: 1;
+                text-align: center;
+                color: white;
+                font-weight: bold;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .complexity-card.c1 { background-color: #20c997; }
+            .complexity-card.c2 { background-color: #fd7e14; }
+            
+            .complexity-card-value {
+                font-size: 1.4em;
+                line-height: 1;
+            }
+            .complexity-card-label {
+                font-size: 0.8em;
+                margin-top: 4px;
+                opacity: 0.9;
+            }
+            
+            .module-container.hidden-by-search,
+            .epic-container.hidden-by-search {
+                display: none;
+            }
+        </style></head>
+  <body>
+    <a href="../main/menu.html" class="home-link" title="Retour à la page d'accueil">
+      🏠 Accueil
+    </a>
+
+    <center>
+      <h1>Matrice des User Stories du Projet (Module &gt; Epic &gt; US)</h1>
+    </center>
+
+    <p class="download-link">
+      <a href="../../docs/csv/RepartitionRedmine.csv" download="RepartitionRedmine.csv" title="Télécharger la matrice des US en format CSV">
+        ⬇️ Télécharger la matrice des US (CSV)
+      </a>
+    </p>
+
+    <div class="controls">
+      <button onclick="collapseAllEpics()">Réduire toutes les US</button>
+      <button onclick="collapseAllModules()">Réduire tous les Epics/US</button>
+      <button onclick="expandAll()">Déployer Tout</button>
+    </div><div class="stats-container collapsed">
+            <div class="stats-header">
+                <span class="icon"></span> Statistiques du Projet et Répartition (5 Équipes)
+            </div>
+            <div class="stats-content">
+                <div class="stats-grid">
+                    <div class="stat-card module-color">
+                        <div class="stat-value">5</div>
+                        <div class="stat-label">Modules</div>
+                    </div>
+                    <div class="stat-card epic-color">
+                        <div class="stat-value">37</div>
+                        <div class="stat-label">Epics</div>
+                    </div>
+                    <div class="stat-card us-color">
+                        <div class="stat-value">238</div>
+                        <div class="stat-label">User Stories</div>
+                    </div>
+                </div>
+                
+                <h3>Complexité Totale (Répartition)</h3>
+                <div class="complexity-summary-cards">
+                    <div class="complexity-card c1">
+                        <div class="complexity-card-value">76 US</div>
+                        <div class="complexity-card-label">Basse (31.9%)</div>
+                    </div>
+                    <div class="complexity-card c2">
+                        <div class="complexity-card-value">127 US</div>
+                        <div class="complexity-card-label">Moyenne (53.4%)</div>
+                    </div>
+                    <div class="complexity-card" style="background-color:#dc3545;">
+                        <div class="complexity-card-value">35 US</div>
+                        <div class="complexity-card-label">Élevée (14.7%)</div>
+                    </div>
+                </div>
+
+                <h3>Charge de Travail par Équipe (Pts Complexité / US)</h3>
+                <div class="stats-grid-teams">
+                    <div class="team-card" style="background-color: hsl(72, 70%, 50%);">
+                        <div class="team-card-label">Équipe 1</div>
+                        <div class="team-card-value">89 pts / 49 US</div>
+                    </div>
+                    <div class="team-card" style="background-color: hsl(144, 70%, 50%);">
+                        <div class="team-card-label">Équipe 2</div>
+                        <div class="team-card-value">88 pts / 48 US</div>
+                    </div>
+                    <div class="team-card" style="background-color: hsl(216, 70%, 50%);">
+                        <div class="team-card-label">Équipe 3</div>
+                        <div class="team-card-value">86 pts / 47 US</div>
+                    </div>
+                    <div class="team-card" style="background-color: hsl(288, 70%, 50%);">
+                        <div class="team-card-label">Équipe 4</div>
+                        <div class="team-card-value">86 pts / 47 US</div>
+                    </div>
+                    <div class="team-card" style="background-color: hsl(360, 70%, 50%);">
+                        <div class="team-card-label">Équipe 5</div>
+                        <div class="team-card-value">86 pts / 47 US</div>
+                    </div></div>
+            </div>
+            </div><div class="filters-bar"><strong>Équipe :</strong> <button id="filter-btn-team-all" class="active">Tout</button><button id="filter-btn-team-1">Équipe 1</button><button id="filter-btn-team-2">Équipe 2</button><button id="filter-btn-team-3">Équipe 3</button><button id="filter-btn-team-4">Équipe 4</button><button id="filter-btn-team-5">Équipe 5</button><strong style="margin-left: 20px;">Complexité :</strong> 
+      <select id="complexity-select-filter">
+        <option value="all">Tout</option>
+        <option value="Basse">Basse</option>
+        <option value="Moyenne">Moyenne</option>
+        <option value="Élevée">Élevée</option>
+      </select>
+    <button id="export-csv-btn">Exporter en CSV</button></div>
+
+    <div class="legend">
+      <span><span class="chip basse"></span>Complexité Basse</span>
+      <span><span class="chip moyenne"></span>Complexité Moyenne</span>
+      <span><span class="chip elevee"></span>Complexité Élevée</span>
+    </div>
+    
+
+    <div class="hierarchy-container" id="hierarchyContainer"><div class="module-container expanded"><h2 class="toggle-module-header"><span class="icon">▼</span>RQ1 : Accueil et recherche</h2><div class="module-content-wrapper"><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ1.1</span>Recherche</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ1" data-epic="RQ1.1" data-complexity="Basse" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ1.1.F1</span><span class="us-title">Recherche simple avec mots clés</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 5</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ1.2</span>Recherche avancée</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ1" data-epic="RQ1.2" data-complexity="Moyenne" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ1.2.F1</span><span class="us-title">Recherche par thématique (Demandes, annonces, documents, …)</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ1" data-epic="RQ1.2" data-complexity="Moyenne" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ1.2.F2</span><span class="us-title">Recherche par option</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 2</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ1.3</span>S'enregistrer</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ1" data-epic="RQ1.3" data-complexity="Moyenne" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ1.3.F1</span><span class="us-title">S'enregistrer en créant un compte à partir de la page de connexion.</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 4</span></li></ul></div></div></div><div class="module-container expanded"><h2 class="toggle-module-header"><span class="icon">▼</span>RQ2 : Ma page</h2><div class="module-content-wrapper"><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ2</span>Gestion des cadrans sur ma page</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ2" data-epic="RQ2" data-complexity="Moyenne" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ2.F1</span><span class="us-title">Ajouter un cadran</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ2" data-epic="RQ2" data-complexity="Basse" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ2.F2</span><span class="us-title">Supprimer un cadran</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ2" data-epic="RQ2" data-complexity="Basse" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ2.F3</span><span class="us-title">Déplacer un cadran</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 2</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ2.1</span>Demandes qui me sont assignées</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ2" data-epic="RQ2.1" data-complexity="Moyenne" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ2.1.F1</span><span class="us-title">Configurer les colonnes affichées</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ2" data-epic="RQ2.1" data-complexity="Basse" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ2.1.F2</span><span class="us-title">Chaque demande affichée est cliquable</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 3</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ2.2</span>Demandes soumises</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ2" data-epic="RQ2.2" data-complexity="Moyenne" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ2.2.F1</span><span class="us-title">Configurer les colonnes affichées</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ2" data-epic="RQ2.2" data-complexity="Basse" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ2.2.F2</span><span class="us-title">Chaque demande affichée est cliquable</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 3</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ2.3</span>Demandes mises à jour</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ2" data-epic="RQ2.3" data-complexity="Moyenne" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ2.3.F1</span><span class="us-title">Configurer les colonnes affichées</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ2" data-epic="RQ2.3" data-complexity="Basse" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ2.3.F2</span><span class="us-title">Chaque demande affichée est cliquable</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 2</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ2.4</span>Demandes surveillées</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ2" data-epic="RQ2.4" data-complexity="Moyenne" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ2.4.F1</span><span class="us-title">Configurer les colonnes affichées</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ2" data-epic="RQ2.4" data-complexity="Basse" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ2.4.F2</span><span class="us-title">Chaque demande affichée est cliquable</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 4</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ2.5</span>Demandes</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ2" data-epic="RQ2.5" data-complexity="Moyenne" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ2.5.F1</span><span class="us-title">Sélectionner un rapport personnalisé</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ2" data-epic="RQ2.5" data-complexity="Basse" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ2.5.F2</span><span class="us-title">Chaque demande affichée est cliquable</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 3</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ2.6</span>Dernières annonces</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ2" data-epic="RQ2.6" data-complexity="Basse" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ2.6.F1</span><span class="us-title">Affichage de la liste des annonces</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ2" data-epic="RQ2.6" data-complexity="Basse" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ2.6.F2</span><span class="us-title">Chaque annonce affichée est cliquable</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 1</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ2.7</span>Calendrier</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ2" data-epic="RQ2.7" data-complexity="Moyenne" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ2.7.F1</span><span class="us-title">Affichage de la liste des demandes sur le calendrier</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ2" data-epic="RQ2.7" data-complexity="Basse" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ2.7.F2</span><span class="us-title">Chaque élément du calendrier est cliquable</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 3</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ2.8</span>Documents</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ2" data-epic="RQ2.8" data-complexity="Basse" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ2.8.F1</span><span class="us-title">Affichage de la liste des documents</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ2" data-epic="RQ2.8" data-complexity="Basse" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ2.8.F2</span><span class="us-title">Chaque document affiché est cliquable</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 4</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ2.9</span>Temps passé</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ2" data-epic="RQ2.9" data-complexity="Basse" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ2.9.F1</span><span class="us-title">Définir le nombre de jours affichés</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ2" data-epic="RQ2.9" data-complexity="Basse" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ2.9.F2</span><span class="us-title">Chaque temps passé s'affiche avec un lien cliquable qui permet d'afficher le temps passé</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 1</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ2.10</span>Activités</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ2" data-epic="RQ2.10" data-complexity="Basse" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ2.10.F1</span><span class="us-title">Affichage de la liste des activités par catégorie</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ2" data-epic="RQ2.10" data-complexity="Basse" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ2.10.F2</span><span class="us-title">Chaque activité s'affiche avec un lien cliquable qui permet d'aller sur l'activité</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 5</span></li></ul></div></div></div><div class="module-container expanded"><h2 class="toggle-module-header"><span class="icon">▼</span>RQ3 : Mon compte</h2><div class="module-content-wrapper"><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ3.1</span>Gestion du compte</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ3" data-epic="RQ3.1" data-complexity="Moyenne" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ3.1.F1</span><span class="us-title">Ajouter une adresse email</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ3" data-epic="RQ3.1" data-complexity="Élevée" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ3.1.F2</span><span class="us-title">Changer de mot de passe</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ3" data-epic="RQ3.1" data-complexity="Élevée" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ3.1.F3</span><span class="us-title">Supprimer mon compte</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ3" data-epic="RQ3.1" data-complexity="Élevée" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ3.1.F4</span><span class="us-title">Réinitialiser le compte</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ3" data-epic="RQ3.1" data-complexity="Moyenne" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ3.1.F5</span><span class="us-title">Modifier les données du compte</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ3" data-epic="RQ3.1" data-complexity="Basse" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ3.1.F6</span><span class="us-title">Afficher la page de profil</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 1</span></li></ul></div></div></div><div class="module-container expanded"><h2 class="toggle-module-header"><span class="icon">▼</span>RQ4 : Projets</h2><div class="module-content-wrapper"><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ4.1</span>Aperçu d'un projet</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ4" data-epic="RQ4.1" data-complexity="Basse" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.1.F1</span><span class="us-title">Le lien du site web permet d'aller sur le site web du projet</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.1" data-complexity="Moyenne" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.1.F2</span><span class="us-title">Le cadran Suivi des demandes affiche des statistiques sur les demandes</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.1" data-complexity="Basse" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.1.F3</span><span class="us-title">Les liens dans le cadran Suivi des demandes parmettent d'afficher le résultat des requêtes respectives</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.1" data-complexity="Moyenne" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.1.F4</span><span class="us-title">Le bouton Loupe dans le cadran Suivi des demandes permet d'afficher des statistiques détaillées sur les demandes</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.1" data-complexity="Moyenne" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.1.F5</span><span class="us-title">Le cadran Suivi du temps affiche des statistiques sur le temps passé</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.1" data-complexity="Basse" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.1.F6</span><span class="us-title">Les liens dans le cadran Suivi du temps parmettent d'afficher le résultat des requêtes respectives</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.1" data-complexity="Basse" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.1.F7</span><span class="us-title">Le cadran Dernières annonces affiches les dernières annonce du projet</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.1" data-complexity="Basse" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.1.F8</span><span class="us-title">Les annonces affichées sont cliquables</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.1" data-complexity="Basse" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.1.F9</span><span class="us-title">Le cadran Membres affiche la liste des membres du projet</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.1" data-complexity="Basse" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.1.F10</span><span class="us-title">Les membres du projet dans le cadran Membres sont cliquables</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.1" data-complexity="Basse" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.1.F11</span><span class="us-title">Ajouter le projet aux favoris</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.1" data-complexity="Basse" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.1.F12</span><span class="us-title">Retirer le projet des favoris</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.1" data-complexity="Moyenne" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.1.F13</span><span class="us-title">Créer un nouveau sous-projet</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.1" data-complexity="Moyenne" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.1.F14</span><span class="us-title">Fermer le projet</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.1" data-complexity="Élevée" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.1.F15</span><span class="us-title">Supprimer le projet</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.1" data-complexity="Basse" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.1.F16</span><span class="us-title">Ouvrir l'onglet de configuration du projet</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 2</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ4.2</span>Activités du projet</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ4" data-epic="RQ4.2" data-complexity="Basse" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.2.F1</span><span class="us-title">Affichage de la liste des activités par catégorie</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.2" data-complexity="Basse" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.2.F2</span><span class="us-title">Les éléments de la liste des activités sont cliquables</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.2" data-complexity="Moyenne" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.2.F3</span><span class="us-title">Filtrer les activités par date</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.2" data-complexity="Moyenne" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.2.F4</span><span class="us-title">Filtrer les activité par utilisateur</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.2" data-complexity="Moyenne" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.2.F5</span><span class="us-title">Filtrer les activités par catégorie</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.2" data-complexity="Basse" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.2.F6</span><span class="us-title">Naviguer dans la liste des activités par période</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 3</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ4.3</span>Gestion des demandes</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ4" data-epic="RQ4.3" data-complexity="Moyenne" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.3.F1</span><span class="us-title">Créer une nouvelle demande</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.3" data-complexity="Basse" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.3.F2</span><span class="us-title">Afficher le résumé des demandes</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.3" data-complexity="Élevée" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.3.F3</span><span class="us-title">Importer des demandes</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.3" data-complexity="Moyenne" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.3.F4</span><span class="us-title">Filtrer la liste des demandes</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.3" data-complexity="Moyenne" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.3.F5</span><span class="us-title">Configurer les options d'affichage du tableau des demandes</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.3" data-complexity="Basse" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.3.F6</span><span class="us-title">Trier la liste des demandes</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.3" data-complexity="Élevée" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.3.F7</span><span class="us-title">Exporter des demandes</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.3" data-complexity="Moyenne" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.3.F8</span><span class="us-title">Modifier une demande</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.3" data-complexity="Moyenne" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.3.F9</span><span class="us-title">Modifier le statut d'une demande</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.3" data-complexity="Moyenne" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.3.F10</span><span class="us-title">Modifier le tracker d'une demande</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.3" data-complexity="Basse" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.3.F11</span><span class="us-title">Modifier la priorité d'une demande</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.3" data-complexity="Moyenne" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.3.F12</span><span class="us-title">Modifier la version cible d'une demande</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.3" data-complexity="Moyenne" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.3.F13</span><span class="us-title">Modifier l'assignation d'une demande</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.3" data-complexity="Basse" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.3.F14</span><span class="us-title">Modifier le pourcentage de réalisation</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.3" data-complexity="Basse" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.3.F15</span><span class="us-title">Affecter des observateurs</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.3" data-complexity="Basse" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.3.F16</span><span class="us-title">Surveiller une demande</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.3" data-complexity="Basse" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.3.F17</span><span class="us-title">Ne plus surveiller une demande</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.3" data-complexity="Moyenne" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.3.F18</span><span class="us-title">Saisir du temps passé sur une demande</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.3" data-complexity="Moyenne" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.3.F19</span><span class="us-title">Ajouter une sous-tâche à une demande</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.3" data-complexity="Moyenne" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.3.F20</span><span class="us-title">Copier une demande</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.3" data-complexity="Moyenne" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.3.F21</span><span class="us-title">Supprimer une demande</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.3" data-complexity="Moyenne" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.3.F22</span><span class="us-title">Créer et visualiser un rapport de demandes</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.3" data-complexity="Moyenne" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.3.F23</span><span class="us-title">Modifier un rapport de demandes</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.3" data-complexity="Moyenne" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.3.F24</span><span class="us-title">Supprimer un rapport de demandes</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.3" data-complexity="Basse" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.3.F25</span><span class="us-title">Effacer les résultats d'un rapport de demandes</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 5</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ4.4</span>Temps passé</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ4" data-epic="RQ4.4" data-complexity="Moyenne" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.4.F1</span><span class="us-title">Saisir du temps passé sur une demande</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.4" data-complexity="Élevée" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.4.F2</span><span class="us-title">Importer du temps passé</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.4" data-complexity="Moyenne" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.4.F3</span><span class="us-title">Filtrer la liste des temps passés</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.4" data-complexity="Moyenne" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.4.F4</span><span class="us-title">Configurer les options d'affichage du tableau du temps passé</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.4" data-complexity="Basse" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.4.F5</span><span class="us-title">Trier la liste des temps passés</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.4" data-complexity="Moyenne" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.4.F6</span><span class="us-title">Modifier un temps passé</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.4" data-complexity="Moyenne" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.4.F7</span><span class="us-title">Supprimer un temps passé</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.4" data-complexity="Moyenne" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.4.F8</span><span class="us-title">Modifier l'activité du temps passé</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.4" data-complexity="Élevée" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.4.F9</span><span class="us-title">Exporter du temps passé</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.4" data-complexity="Moyenne" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.4.F10</span><span class="us-title">Créer et visualiser un rapport de temps passé</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.4" data-complexity="Moyenne" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.4.F11</span><span class="us-title">Modifier un rapport de temps passé</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.4" data-complexity="Moyenne" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.4.F12</span><span class="us-title">Supprimer un rapport de temps passé</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.4" data-complexity="Basse" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.4.F13</span><span class="us-title">Effacer les résultats d'un rapport de temps passé</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.4" data-complexity="Basse" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.4.F14</span><span class="us-title">Afficher le rapport récapitulatif du temps passé</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.4" data-complexity="Élevée" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.4.F15</span><span class="us-title">Exporter le rapport récapitulatif du temps passé</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 4</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ4.5</span>Gantt</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ4" data-epic="RQ4.5" data-complexity="Moyenne" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.5.F1</span><span class="us-title">Filtrer le diagramme de Gantt</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.5" data-complexity="Moyenne" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.5.F2</span><span class="us-title">Configurer les colonnes du diagramme de Gantt</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.5" data-complexity="Moyenne" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.5.F3</span><span class="us-title">Créer et visualiser un rapport diagramme de Gantt</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.5" data-complexity="Moyenne" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.5.F4</span><span class="us-title">Modifier un rapport diagramme de Gantt</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.5" data-complexity="Moyenne" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.5.F5</span><span class="us-title">Supprimer un rapport diagramme de Gantt</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.5" data-complexity="Basse" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.5.F6</span><span class="us-title">Effacer les résultats d'un rapport diagramme de Gantt</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.5" data-complexity="Basse" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.5.F7</span><span class="us-title">Zoom avant/arriére, navigation dans le diagramme de Gantt</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.5" data-complexity="Élevée" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.5.F8</span><span class="us-title">Exporter le diagramme de Gantt</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 5</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ4.6</span>Calendrier</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ4" data-epic="RQ4.6" data-complexity="Moyenne" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.6.F1</span><span class="us-title">Filtrer le calendrier</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.6" data-complexity="Moyenne" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.6.F2</span><span class="us-title">Configurer les colonnes du calendrier</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.6" data-complexity="Moyenne" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.6.F3</span><span class="us-title">Créer et visualiser un rapport calendrier</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.6" data-complexity="Moyenne" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.6.F4</span><span class="us-title">Modifier un rapport calendrier</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.6" data-complexity="Moyenne" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.6.F5</span><span class="us-title">Supprimer un rapport calendrier</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.6" data-complexity="Basse" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.6.F6</span><span class="us-title">Effacer les résultats d'un rapport calendrier</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.6" data-complexity="Basse" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.6.F7</span><span class="us-title">Navigation dans le calendrier</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 4</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ4.7</span>Documents</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ4" data-epic="RQ4.7" data-complexity="Moyenne" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.7.F1</span><span class="us-title">Ajouter un nouveau document</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.7" data-complexity="Moyenne" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.7.F2</span><span class="us-title">Modifier un document ajouté</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.7" data-complexity="Moyenne" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.7.F3</span><span class="us-title">Supprimé un document ajouté</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.7" data-complexity="Moyenne" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.7.F4</span><span class="us-title">Ajouter un nouveau fichier à un document déjà créé</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 1</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ4.8</span>Annonces</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ4" data-epic="RQ4.8" data-complexity="Moyenne" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.8.F1</span><span class="us-title">Créer une nouvelle annonce</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.8" data-complexity="Basse" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.8.F2</span><span class="us-title">Surveiller une annonce</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.8" data-complexity="Basse" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.8.F3</span><span class="us-title">Ne plus surveiller une annonce</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.8" data-complexity="Élevée" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.8.F4</span><span class="us-title">Exporter les annonces</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.8" data-complexity="Moyenne" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.8.F5</span><span class="us-title">Modifier une annonce</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.8" data-complexity="Moyenne" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.8.F6</span><span class="us-title">Supprimer une annonce</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.8" data-complexity="Basse" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.8.F7</span><span class="us-title">Ajouter un commentaire à une annonce</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.8" data-complexity="Basse" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.8.F8</span><span class="us-title">Supprimer un commentaire</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 4</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ4.9</span>Wiki</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ4" data-epic="RQ4.9" data-complexity="Moyenne" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.9.F1</span><span class="us-title">Modifier le contenu du wiki</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.9" data-complexity="Basse" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.9.F2</span><span class="us-title">Surveiller la page wiki</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.9" data-complexity="Basse" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.9.F3</span><span class="us-title">Ne plus surveiller la page wiki</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.9" data-complexity="Moyenne" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.9.F4</span><span class="us-title">Verrouiller la page wiki</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.9" data-complexity="Moyenne" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.9.F5</span><span class="us-title">Déverrouiller la page wiki</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.9" data-complexity="Moyenne" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.9.F6</span><span class="us-title">Renommer la page wiki</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.9" data-complexity="Moyenne" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.9.F7</span><span class="us-title">Supprimer la page wiki</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.9" data-complexity="Moyenne" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.9.F8</span><span class="us-title">Créer une nouvelle page wiki</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.9" data-complexity="Moyenne" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.9.F9</span><span class="us-title">Ajouter un fichier à une page wiki</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.9" data-complexity="Basse" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.9.F10</span><span class="us-title">Afficher l'historique de la page wiki</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.9" data-complexity="Basse" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.9.F11</span><span class="us-title">Afficher la page de démarrage</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.9" data-complexity="Basse" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.9.F12</span><span class="us-title">Afficher l'index par titre</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.9" data-complexity="Basse" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.9.F13</span><span class="us-title">Afficher l'index par date</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.9" data-complexity="Moyenne" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.9.F14</span><span class="us-title">Exporter une page wiki</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 2</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ4.10</span>Forums</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ4" data-epic="RQ4.10" data-complexity="Moyenne" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.10.F1</span><span class="us-title">Créer un nouveau message dans un forum</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.10" data-complexity="Basse" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.10.F2</span><span class="us-title">Surveiller un forum</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.10" data-complexity="Basse" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.10.F3</span><span class="us-title">Ne plus surveiller un forum</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.10" data-complexity="Basse" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.10.F4</span><span class="us-title">Trier la liste des forums</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.10" data-complexity="Basse" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.10.F5</span><span class="us-title">Surveiller un message sur un forum</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.10" data-complexity="Basse" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.10.F6</span><span class="us-title">Ne plus surveiller un message sur un forum</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.10" data-complexity="Moyenne" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.10.F7</span><span class="us-title">Citer un message sur un forum</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.10" data-complexity="Moyenne" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.10.F8</span><span class="us-title">Modifier un message sur un forum</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.10" data-complexity="Moyenne" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.10.F9</span><span class="us-title">Supprimer un message sur un forum</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.10" data-complexity="Basse" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.10.F10</span><span class="us-title">Répondre à un message sur un forum</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.10" data-complexity="Basse" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.10.F11</span><span class="us-title">Ajouter un observateur sur un message sur un forum</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 4</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ4.11</span>Roadmap</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ4" data-epic="RQ4.11" data-complexity="Moyenne" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.11.F1</span><span class="us-title">Affichage de l'avancement sur une version</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.11" data-complexity="Moyenne" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.11.F2</span><span class="us-title">Filtrer la liste des versions par tracker</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.11" data-complexity="Basse" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.11.F3</span><span class="us-title">Afficher l'aperçu sur une version</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.11" data-complexity="Moyenne" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.11.F4</span><span class="us-title">Modifier une version</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.11" data-complexity="Moyenne" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.11.F5</span><span class="us-title">Supprimer une version</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 2</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ4.12</span>Fichiers</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ4" data-epic="RQ4.12" data-complexity="Moyenne" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.12.F1</span><span class="us-title">Ajouter un nouveau fichier</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.12" data-complexity="Basse" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.12.F2</span><span class="us-title">Trier la liste des fichiers</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.12" data-complexity="Basse" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.12.F3</span><span class="us-title">Visualiser un fichier</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.12" data-complexity="Basse" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.12.F4</span><span class="us-title">Télécharger un fichier</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.12" data-complexity="Moyenne" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.12.F5</span><span class="us-title">Supprimer un fichier</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 1</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ4.13</span>Configuration</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ4" data-epic="RQ4.13" data-complexity="Moyenne" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.13.F1</span><span class="us-title">Modifier les données d'un projet</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.13" data-complexity="Moyenne" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.13.F2</span><span class="us-title">Ajouter des membres à un projet</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.13" data-complexity="Moyenne" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.13.F3</span><span class="us-title">Modifier les membres d'un projet</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.13" data-complexity="Moyenne" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.13.F4</span><span class="us-title">Supprimer les membres d'un projet</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.13" data-complexity="Élevée" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.13.F5</span><span class="us-title">Configurer les trackers de suivi des demandes</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.13" data-complexity="Élevée" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.13.F6</span><span class="us-title">Configurer la version par défaut de suivi des demandes</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.13" data-complexity="Élevée" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.13.F7</span><span class="us-title">Configurer l'assignation par défaut de suivi des demandes</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.13" data-complexity="Moyenne" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.13.F8</span><span class="us-title">Créer une nouvelle version</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.13" data-complexity="Moyenne" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.13.F9</span><span class="us-title">Filtrer la liste des versions</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.13" data-complexity="Moyenne" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.13.F10</span><span class="us-title">Modifier une version</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.13" data-complexity="Moyenne" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.13.F11</span><span class="us-title">Supprimer une version</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.13" data-complexity="Moyenne" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.13.F12</span><span class="us-title">Fermer les versions terminées</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.13" data-complexity="Moyenne" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.13.F13</span><span class="us-title">Créer une nouvelle catégorie de demandes</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.13" data-complexity="Moyenne" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.13.F14</span><span class="us-title">Modifier une catégorie de demandes</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.13" data-complexity="Moyenne" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.13.F15</span><span class="us-title">Supprimer une catégorie de demandes</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.13" data-complexity="Moyenne" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ4.13.F16</span><span class="us-title">Créer un nouveau forum</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.13" data-complexity="Moyenne" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ4.13.F17</span><span class="us-title">Modifier un forum</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.13" data-complexity="Moyenne" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.13.F18</span><span class="us-title">Supprimer un forum</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.13" data-complexity="Basse" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ4.13.F19</span><span class="us-title">Trier la liste des forums</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.13" data-complexity="Élevée" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ4.13.F20</span><span class="us-title">Configurer les activités pour le suivi du temps</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ4" data-epic="RQ4.13" data-complexity="Élevée" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ4.13.F21</span><span class="us-title">Réinitialiser les activités pour le suivi du temps</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 5</span></li></ul></div></div></div><div class="module-container expanded"><h2 class="toggle-module-header"><span class="icon">▼</span>RQ5 : Administration</h2><div class="module-content-wrapper"><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ5.1</span>Gestion des projets</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ5" data-epic="RQ5.1" data-complexity="Élevée" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ5.1.F1</span><span class="us-title">Créer un nouveau projet</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.1" data-complexity="Moyenne" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ5.1.F2</span><span class="us-title">Filtrer la liste des projets</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.1" data-complexity="Moyenne" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ5.1.F3</span><span class="us-title">Modifier un projet</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.1" data-complexity="Moyenne" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ5.1.F4</span><span class="us-title">Archiver un projet</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.1" data-complexity="Moyenne" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ5.1.F5</span><span class="us-title">Désarchiver un projet</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.1" data-complexity="Élevée" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ5.1.F6</span><span class="us-title">Copier un projet</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.1" data-complexity="Élevée" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ5.1.F7</span><span class="us-title">Supprimer un projet</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 1</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ5.2</span>Gestion des utilisateurs</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ5" data-epic="RQ5.2" data-complexity="Élevée" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ5.2.F1</span><span class="us-title">Créer un utilisateur</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.2" data-complexity="Moyenne" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ5.2.F2</span><span class="us-title">Filtrer la liste des utilisateurs</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.2" data-complexity="Basse" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ5.2.F3</span><span class="us-title">Trier la liste des utilisateurs</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.2" data-complexity="Élevée" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ5.2.F4</span><span class="us-title">Importer une liste d'utilisateurs</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.2" data-complexity="Moyenne" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ5.2.F5</span><span class="us-title">Modifier un utilisateur</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.2" data-complexity="Moyenne" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ5.2.F6</span><span class="us-title">Verrouiller un utilisateur</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.2" data-complexity="Moyenne" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ5.2.F7</span><span class="us-title">Déverrouiller un utilisateur</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.2" data-complexity="Élevée" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ5.2.F8</span><span class="us-title">Supprimer un utilisateur</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 3</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ5.3</span>Gestion des groupes utilisateurs</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ5" data-epic="RQ5.3" data-complexity="Moyenne" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ5.3.F1</span><span class="us-title">Créer un groupe</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.3" data-complexity="Moyenne" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ5.3.F2</span><span class="us-title">Filtrer la liste des groupe</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.3" data-complexity="Moyenne" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ5.3.F3</span><span class="us-title">Modifier un groupe</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.3" data-complexity="Moyenne" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ5.3.F4</span><span class="us-title">Supprimer un groupe</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.3" data-complexity="Moyenne" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ5.3.F5</span><span class="us-title">Ajouter des utilisateurs à un groupe</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.3" data-complexity="Moyenne" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ5.3.F6</span><span class="us-title">Supprimer des utilisateur d'un groupe</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.3" data-complexity="Moyenne" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ5.3.F7</span><span class="us-title">Ajouter des projets à un groupe</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.3" data-complexity="Moyenne" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ5.3.F8</span><span class="us-title">Retirer un projet d'un groupe</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.3" data-complexity="Moyenne" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ5.3.F9</span><span class="us-title">Modifier l'ajout d'un projet à un groupe</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 5</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ5.4</span>Rôles et permissions</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ5" data-epic="RQ5.4" data-complexity="Élevée" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ5.4.F1</span><span class="us-title">Créer un nouveau rôle</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.4" data-complexity="Basse" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ5.4.F2</span><span class="us-title">Trier la liste des rôles</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.4" data-complexity="Moyenne" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ5.4.F3</span><span class="us-title">Copier un rôle</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.4" data-complexity="Élevée" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ5.4.F4</span><span class="us-title">Supprimer un rôle</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.4" data-complexity="Élevée" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ5.4.F5</span><span class="us-title">Afficher et modifier la synthèse des permissions des rôles</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 3</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ5.5</span>Trackers</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ5" data-epic="RQ5.5" data-complexity="Élevée" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ5.5.F1</span><span class="us-title">Créer un nouveau tracker</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.5" data-complexity="Élevée" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ5.5.F2</span><span class="us-title">Modifier un tracker</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.5" data-complexity="Basse" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ5.5.F3</span><span class="us-title">Trier la liste des trackers</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.5" data-complexity="Élevée" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ5.5.F4</span><span class="us-title">Supprimer un tracker</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.5" data-complexity="Moyenne" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ5.5.F5</span><span class="us-title">Copier un tracker</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.5" data-complexity="Moyenne" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ5.5.F6</span><span class="us-title">Afficher et modifier le résumé des trackers</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 5</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ5.6</span>Statuts des demandes</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ5" data-epic="RQ5.6" data-complexity="Moyenne" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ5.6.F1</span><span class="us-title">Créer un statut</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.6" data-complexity="Moyenne" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ5.6.F2</span><span class="us-title">Modifier un statut</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.6" data-complexity="Élevée" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ5.6.F3</span><span class="us-title">Supprimer un statut</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.6" data-complexity="Basse" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ5.6.F4</span><span class="us-title">Trier la liste des statuts</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 1</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ5.7</span>Workflow</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ5" data-epic="RQ5.7" data-complexity="Élevée" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ5.7.F1</span><span class="us-title">Workflow : Modifier le statut pour un rôle et un tracker</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.7" data-complexity="Élevée" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ5.7.F2</span><span class="us-title">Workflow : Modifier la permission sur les champs pour un rôle et un tracker</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.7" data-complexity="Élevée" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ5.7.F3</span><span class="us-title">Copier un workflow</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.7" data-complexity="Moyenne" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ5.7.F4</span><span class="us-title">Afficher le résumé des workflows</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 1</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ5.8</span>Champs personnalisés</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ5" data-epic="RQ5.8" data-complexity="Élevée" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ5.8.F1</span><span class="us-title">Créer un nouveau champ personnalisé</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.8" data-complexity="Élevée" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ5.8.F2</span><span class="us-title">Modifier un champ personnalisé</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.8" data-complexity="Moyenne" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ5.8.F3</span><span class="us-title">Copier un champ personnalisé</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.8" data-complexity="Élevée" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ5.8.F4</span><span class="us-title">Supprimer un champ personnalisé</span></div><span class="complexity-tag c-elevee">Élevée</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.8" data-complexity="Basse" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ5.8.F5</span><span class="us-title">Trier la liste des champs personnalisés</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 1</span></li></ul></div><div class="epic-container expanded"><h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">RQ5.9</span>Liste de valeurs</h3><ul class="epic-content-list"><li class="user-story" data-module="RQ5" data-epic="RQ5.9" data-complexity="Moyenne" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ5.9.F1</span><span class="us-title">Créer une catégorie de documents</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.9" data-complexity="Moyenne" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ5.9.F2</span><span class="us-title">Modifier une catégorie de documents</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.9" data-complexity="Moyenne" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ5.9.F3</span><span class="us-title">Supprimer une catégorie de documents</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.9" data-complexity="Basse" data-team="1"><div class="us-details-group"><span class="us-code-tag">RQ5.9.F4</span><span class="us-title">Trier la liste des catégories de documents</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 1</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.9" data-complexity="Moyenne" data-team="5"><div class="us-details-group"><span class="us-code-tag">RQ5.9.F5</span><span class="us-title">Créer une priorité</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 5</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.9" data-complexity="Moyenne" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ5.9.F6</span><span class="us-title">Modifier une priorité</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.9" data-complexity="Moyenne" data-team="2"><div class="us-details-group"><span class="us-code-tag">RQ5.9.F7</span><span class="us-title">Supprimer une priorité</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 2</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.9" data-complexity="Basse" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ5.9.F8</span><span class="us-title">Trier la liste des priorités</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.9" data-complexity="Moyenne" data-team="4"><div class="us-details-group"><span class="us-code-tag">RQ5.9.F9</span><span class="us-title">Créer une activité</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 4</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.9" data-complexity="Moyenne" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ5.9.F10</span><span class="us-title">Modifier une activité</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.9" data-complexity="Moyenne" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ5.9.F11</span><span class="us-title">Supprimer une activité</span></div><span class="complexity-tag c-moyenne">Moyenne</span><span class="team-tag">Équipe 3</span></li><li class="user-story" data-module="RQ5" data-epic="RQ5.9" data-complexity="Basse" data-team="3"><div class="us-details-group"><span class="us-code-tag">RQ5.9.F12</span><span class="us-title">Trier la liste des activités</span></div><span class="complexity-tag c-basse">Basse</span><span class="team-tag">Équipe 3</span></li></ul></div></div></div></div>
+    <div id="loadError" class="hidden" style="
+        color: #842029;
+        background: #f8d7da;
+        border: 1px solid #f5c2c7;
+        padding: 8px 10px;
+        border-radius: 4px;
+        margin-top: 10px;
+      "></div>
+
+    
+
+    <footer>
+      <center>
+        <p>
+          © Talel Zid | Version 1.0 — Novembre 2024 |
+          <a href="https://www.redmine.org/" target="_blank">Redmine Project Management</a>
+          | <br>Pour usage personnel ou éducatif seulement.
+        </p>
+      </center>
+    </footer>
+
+    <script>
+      const CSV_URL = "../../docs/csv/RepartitionRedmine.csv";
+
+      // Lecture du CSV puis rendu intégral depuis la source unique
+      async function loadAndRender() {
+        try {
+          const res = await fetch(CSV_URL, { cache: "no-store" });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const text = await res.text();
+          const rows = parseCSV(text);
+          render(rows);
+          applyFilters();
+        } catch (err) {
+          const box = document.getElementById("loadError");
+          box.textContent = `Erreur de chargement du CSV (${CSV_URL}) : ${err.message}. Si vous ouvrez le fichier en file://, utilisez un serveur local.`;
+          box.classList.remove("hidden");
+        }
+      }
+
+      // Parseur simple CSV à séparateur ';' (attendu par le fichier)
+      function parseCSV(text) {
+        const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
+        const rows = [];
+        for (let i = 0; i < lines.length; i++) {
+          const cols = lines[i]
+            .split(";")
+            .map((c) => c.replace(/\r/g, "").trim());
+          if (i === 0) continue; // sauter l'en-tête
+          if (cols.length < 6) continue; // ignorer lignes incomplètes
+          const [mCode, mName, eCode, eName, usCode, usTitle] = cols;
+          const rawComplexity = cols[6] || "";
+          rows.push([
+            mCode,
+            mName,
+            eCode,
+            eName,
+            usCode,
+            usTitle,
+            normalizeComplexity(rawComplexity),
+          ]);
+        }
+        return rows;
+      }
+
+      // --- Groupement hiérarchique ---
+      function buildHierarchy(rows) {
+        const modules = new Map();
+        rows.forEach(([mCode, mName, eCode, eName, usCode, usTitle, comp]) => {
+          if (!modules.has(mCode))
+            modules.set(mCode, {
+              code: mCode,
+              name: mName,
+              epics: new Map(),
+            });
+          const mod = modules.get(mCode);
+          if (!mod.epics.has(eCode))
+            mod.epics.set(eCode, {
+              code: eCode,
+              name: eName,
+              stories: [],
+            });
+          mod.epics.get(eCode).stories.push({
+            code: usCode,
+            title: usTitle,
+            complexity: comp,
+          });
+        });
+        return Array.from(modules.values()).map((m) => ({
+          ...m,
+          epics: Array.from(m.epics.values()),
+        }));
+      }
+
+      function normalizeComplexity(raw) {
+        const l = (raw || "")
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/\p{Diacritic}/gu, "");
+        if (l.includes("elevee") || l.includes("elev") || l.includes("lev"))
+          return "Élevée";
+        if (l.includes("moy")) return "Moyenne";
+        return "Basse";
+      }
+
+      function complexityClass(label) {
+        const l = (label || "").toLowerCase();
+        if (l.includes("lev")) return "c-elevee";
+        if (l.startsWith("m")) return "c-moyenne";
+        return "c-basse";
+      }
+
+      function render(rows) {
+        const container = document.getElementById("hierarchyContainer");
+        container.innerHTML = "";
+        const data = buildHierarchy(rows);
+        data.forEach((module) => {
+          const modDiv = document.createElement("div");
+          modDiv.className = "module-container expanded";
+          modDiv.innerHTML = `<h2 class="toggle-module-header"><span class="icon">▼</span>${module.code} : ${module.name}</h2><div class="module-content-wrapper"></div>`;
+          const wrapper = modDiv.querySelector(".module-content-wrapper");
+          module.epics.forEach((epic) => {
+            const epicDiv = document.createElement("div");
+            epicDiv.className = "epic-container expanded";
+            epicDiv.innerHTML = `<h3 class="toggle-epic-header"><span class="icon">▼</span><span class="epic-code-tag">${epic.code}</span>${epic.name}</h3><ul class="epic-content-list"></ul>`;
+            const list = epicDiv.querySelector("ul");
+            epic.stories.forEach((story) => {
+              const li = document.createElement("li");
+              li.className = "user-story";
+              li.dataset.module = module.code;
+              li.dataset.epic = epic.code;
+              li.dataset.complexity = story.complexity;
+              li.innerHTML = `<div class="us-details-group"><span class="us-code-tag">${
+                story.code
+              }</span><span class="us-title">${
+                story.title
+              }</span></div><span class="complexity-tag ${complexityClass(
+                story.complexity
+              )}">${story.complexity}</span>`;
+              list.appendChild(li);
+            });
+            wrapper.appendChild(epicDiv);
+          });
+          container.appendChild(modDiv);
+        });
+        attachToggleHandlers();
+      }
+
+      function attachToggleHandlers() {
+        document.querySelectorAll(".toggle-module-header").forEach((h) => {
+          h.onclick = () => h.parentElement.classList.toggle("collapsed");
+        });
+        document.querySelectorAll(".toggle-epic-header").forEach((h) => {
+          h.onclick = () => h.parentElement.classList.toggle("collapsed");
+        });
+      }
+
+      function expandAll() {
+        document
+          .querySelectorAll(".module-container, .epic-container")
+          .forEach((e) => e.classList.remove("collapsed"));
+      }
+      function collapseAllModules() {
+        document
+          .querySelectorAll(".module-container")
+          .forEach((e) => e.classList.add("collapsed"));
+      }
+      function collapseAllEpics() {
+        document
+          .querySelectorAll(".epic-container")
+          .forEach((e) => e.classList.add("collapsed"));
+        document
+          .querySelectorAll(".module-container")
+          .forEach((e) => e.classList.remove("collapsed"));
+      }
+
+      // --- Recherche & Filtre complexité ---
+      function applyFilters() {
+        const q = document
+          .getElementById("searchInput")
+          .value.toLowerCase()
+          .trim();
+        const comp = document.getElementById("complexityFilter").value;
+        const stories = document.querySelectorAll(".user-story");
+        stories.forEach((story) => {
+          const text = (story.textContent || "").toLowerCase();
+          const matchesQ = !q || text.includes(q);
+          const matchesC = comp === "all" || story.dataset.complexity === comp;
+          story.classList.toggle("hidden", !(matchesQ && matchesC));
+        });
+        // Masquer epics ou modules vides
+        document.querySelectorAll(".epic-container").forEach((ep) => {
+          const hasVisible =
+            ep.querySelectorAll(".user-story:not(.hidden)").length > 0;
+          ep.classList.toggle("hidden", !hasVisible);
+        });
+        document.querySelectorAll(".module-container").forEach((mod) => {
+          const hasVisible =
+            mod.querySelectorAll(".user-story:not(.hidden)").length > 0;
+          mod.classList.toggle("hidden", !hasVisible);
+        });
+      }
+
+      document
+        .getElementById("searchInput")
+        .addEventListener("input", applyFilters);
+      document
+        .getElementById("complexityFilter")
+        .addEventListener("change", applyFilters);
+
+      // ==========================================================
+      // === FONCTIONS DU GÉNÉRATEUR (PANNEAU ENSEIGNANT) ===
+      // ==========================================================
+
+      /** Détermine le libellé standard de complexité: Basse | Moyenne | Élevée */
+      function complexityToLabel(complexityText) {
+        const l = (complexityText || "")
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/\p{Diacritic}/gu, "");
+        if (l.includes("elevee") || l.includes("elev")) return "Élevée";
+        if (l.includes("moy")) return "Moyenne";
+        return "Basse";
+      }
+
+      /** Poids pour la charge: Basse=1, Moyenne=2, Élevée=3 */
+      function complexityWeight(label) {
+        const l = (label || "").toLowerCase();
+        if (l.includes("lev")) return 3;
+        if (l.startsWith("m")) return 2;
+        return 1;
+      }
+
+      /** Injecte le CSS nécessaire dans le <head> du document cloné */
+      function injectCSS(doc) {
+        const style = document.createElement("style");
+        style.type = "text/css";
+        style.innerHTML = `
+            .team-tag {
+                font-weight: bold;
+                padding: 4px 10px;
+                border-radius: 3px;
+                margin-left: 10px;
+                background-color: #007bff; 
+                color: white;
+                font-size: 0.8em;
+                flex-shrink: 0;
+            }
+            
+            .filters-bar {
+                margin-bottom: 20px;
+                padding: 10px;
+                background-color: #f8f9fa;
+                border: 1px solid #e9ecef;
+                border-radius: 5px;
+                display: flex; 
+                align-items: center;
+                flex-wrap: wrap; 
+            }
+            .filters-bar strong {
+                margin-right: 10px;
+                flex-shrink: 0;
+            }
+            .filters-bar button, .filters-bar select {
+                padding: 8px 15px;
+                margin-right: 10px;
+                cursor: pointer;
+                background-color: #6c757d; 
+                color: white;
+                border: none;
+                border-radius: 4px;
+                transition: background-color 0.3s;
+            }
+            .filters-bar button:hover {
+                background-color: #5a6268;
+            }
+            .filters-bar button.active {
+                background-color: #007bff; 
+            }
+            #export-csv-btn {
+                background-color: #ffc107; 
+                color: black;
+                font-weight: bold;
+                margin-left: auto; 
+            }
+            .filters-bar select {
+                background-color: white;
+                color: #333;
+                border: 1px solid #ccc;
+                height: 35px; 
+                min-width: 130px;
+            }
+
+            .user-story.hidden-by-filter,
+            .user-story.hidden-by-search {
+                display: none;
+            }
+            
+            .stats-container {
+                margin-bottom: 30px;
+                background-color: #ffffff;
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+            }
+            
+            .stats-header {
+                background-color: #e9ecef;
+                color: #343a40;
+                padding: 15px;
+                cursor: pointer;
+                border-top-left-radius: 8px;
+                border-top-right-radius: 8px;
+                font-size: 1.2em;
+                font-weight: bold;
+                display: flex;
+                align-items: center;
+            }
+            
+            .stats-header .icon {
+                margin-right: 10px;
+            }
+
+            .stats-content {
+                padding: 20px;
+                transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+                overflow: hidden;
+            }
+            
+            .stats-container.collapsed .stats-content {
+                max-height: 0;
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+            .stats-container.collapsed .stats-header {
+                border-radius: 8px; 
+            }
+            .stats-container.collapsed .stats-header .icon::before {
+                content: '►'; 
+            }
+            
+            .stats-header .icon::before {
+                content: '▼'; 
+            }
+            
+            .stats-grid {
+                display: flex;
+                justify-content: space-around;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+            .stat-card {
+                padding: 15px;
+                border-radius: 5px;
+                width: 30%;
+                color: white;
+            }
+            .stat-value {
+                font-size: 2em;
+                font-weight: bold;
+            }
+            
+            .module-color { background-color: #495057; }
+            .epic-color { background-color: #17a2b8; }
+            .us-color { background-color: #28a745; }
+            
+            .stats-grid-teams {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 15px;
+                margin-bottom: 20px;
+                justify-content: flex-start;
+            }
+            
+            .team-card {
+                padding: 12px 15px;
+                border-radius: 5px;
+                min-width: 150px;
+                flex-grow: 1;
+                text-align: center;
+                color: white;
+                font-weight: bold;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .team-card-label {
+                font-size: 0.9em;
+                opacity: 0.8;
+            }
+            .team-card-value {
+                font-size: 1.5em;
+                margin-top: 5px;
+                line-height: 1;
+            }
+            
+            .complexity-summary-cards {
+                display: flex;
+                gap: 15px;
+                margin-bottom: 20px;
+            }
+            .complexity-card {
+                padding: 12px 15px;
+                border-radius: 5px;
+                min-width: 150px;
+                flex-grow: 1;
+                text-align: center;
+                color: white;
+                font-weight: bold;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .complexity-card.c1 { background-color: #20c997; }
+            .complexity-card.c2 { background-color: #fd7e14; }
+            
+            .complexity-card-value {
+                font-size: 1.4em;
+                line-height: 1;
+            }
+            .complexity-card-label {
+                font-size: 0.8em;
+                margin-top: 4px;
+                opacity: 0.9;
+            }
+            
+            .module-container.hidden-by-search,
+            .epic-container.hidden-by-search {
+                display: none;
+            }
+        `;
+        doc.head.appendChild(style);
+      }
+
+      /** Injecte les statistiques dans le document cloné */
+      function injectStatsHTML(doc, stats, getStatsHTML) {
+        const controlsDiv = doc.querySelector(".controls");
+        if (!controlsDiv) return;
+
+        const statsContainer = document.createElement("div");
+        statsContainer.className = "stats-container";
+        statsContainer.classList.add("collapsed");
+        statsContainer.innerHTML = getStatsHTML(stats);
+        controlsDiv.insertAdjacentElement("afterend", statsContainer);
+      }
+
+      /** Injecte les filtres (équipe, complexité) */
+      function injectFiltersHTML(doc, numTeams) {
+        const statsContainer = doc.querySelector(".stats-container");
+        if (!statsContainer) return;
+
+        const filtersBar = document.createElement("div");
+        filtersBar.className = "filters-bar";
+
+        let html = "<strong>Équipe :</strong> ";
+        html += '<button id="filter-btn-team-all" class="active">Tout</button>';
+
+        for (let i = 1; i <= numTeams; i++) {
+          html += `<button id="filter-btn-team-${i}">Équipe ${i}</button>`;
+        }
+
+        html += '<strong style="margin-left: 20px;">Complexité :</strong> ';
+        html += `
+      <select id="complexity-select-filter">
+        <option value="all">Tout</option>
+        <option value="Basse">Basse</option>
+        <option value="Moyenne">Moyenne</option>
+        <option value="Élevée">Élevée</option>
+      </select>
+    `;
+
+        html += `<button id="export-csv-btn">Exporter en CSV</button>`;
+        filtersBar.innerHTML = html;
+        statsContainer.insertAdjacentElement("afterend", filtersBar);
+      }
+
+      /** Injecte les fonctions de filtrage et d'export CSV */
+      function injectFiltersJS(doc) {
+        const newScript = document.createElement("script");
+
+        const filterAndExportCode = `
+            function applyCombinedFilters(silent = false) {
+                const stories = document.querySelectorAll('.user-story');
+                
+                const activeTeamBtn = document.querySelector('.filters-bar button[id^="filter-btn-team-"].active');
+                const teamFilter = activeTeamBtn ? (activeTeamBtn.id.includes('all') ? 'all' : activeTeamBtn.id.replace('filter-btn-team-', '')) : 'all';
+                
+                const complexitySelect = document.getElementById('complexity-select-filter');
+                const complexityFilter = complexitySelect ? complexitySelect.value : 'all';
+
+                stories.forEach(story => {
+                    const teamMatch = teamFilter === 'all' || story.dataset.team === teamFilter;
+                    const complexityMatch = complexityFilter === 'all' || story.dataset.complexity === complexityFilter;
+                    story.classList.toggle('hidden-by-filter', !(teamMatch && complexityMatch));
+                });
+                
+                document.querySelectorAll('.epic-container').forEach(ep => {
+                    const hasVisible = ep.querySelectorAll('.user-story:not(.hidden-by-filter)').length > 0;
+                    ep.classList.toggle('hidden-by-filter', !hasVisible);
+                });
+                document.querySelectorAll('.module-container').forEach(mod => {
+                    const hasVisible = mod.querySelectorAll('.user-story:not(.hidden-by-filter)').length > 0;
+                    mod.classList.toggle('hidden-by-filter', !hasVisible);
+                });
+                
+                if (!silent) {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }
+
+            function attachFilterListeners() {
+                const teamButtons = document.querySelectorAll('.filters-bar button[id^="filter-btn-team-"]:not(#export-csv-btn)');
+                teamButtons.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.filters-bar button[id^="filter-btn-team-"]').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        applyCombinedFilters();
+                    });
+                });
+                
+                document.getElementById('complexity-select-filter')?.addEventListener('change', applyCombinedFilters);
+
+                document.querySelector('.stats-container .stats-header')?.addEventListener('click', (event) => {
+                    event.currentTarget.closest('.stats-container').classList.toggle('collapsed');
+                });
+
+                const csvBtn = document.getElementById('export-csv-btn');
+                if(csvBtn) {
+                    csvBtn.addEventListener('click', exportToCSV);
+                }
+
+                document.querySelectorAll('.toggle-module-header').forEach(h => {
+                    h.onclick = () => h.parentElement.classList.toggle('collapsed');
+                });
+                document.querySelectorAll('.toggle-epic-header').forEach(h => {
+                    h.onclick = () => h.parentElement.classList.toggle('collapsed');
+                });
+            }
+
+            function exportToCSV() {
+                let csv = "Code module;Module;Code Epic;Epic;Code US;US;Équipe;Complexité\\r\\n";
+                
+                const visibleStories = document.querySelectorAll('.user-story:not(.hidden-by-filter)');
+
+                if (visibleStories.length === 0) {
+                    alert("Aucune User Story visible à exporter.");
+                    return;
+                }
+                
+                visibleStories.forEach(story => {
+                    const cleanText = (text) => text ? text.trim().replace(/"/g, '""') : '';
+                    
+                    const moduleContainer = story.closest('.module-container');
+                    const moduleHeader = moduleContainer ? moduleContainer.querySelector('.toggle-module-header').textContent : '';
+                    const moduleMatch = moduleHeader.match(/([A-Z]+\\d+)\\s*:\\s*(.+)/);
+                    const moduleCode = moduleMatch ? moduleMatch[1].trim() : '';
+                    const moduleName = moduleMatch ? moduleMatch[2].trim() : '';
+                    
+                    const epicContainer = story.closest('.epic-container');
+                    const epicCodeTag = epicContainer ? epicContainer.querySelector('.epic-code-tag') : null;
+                    const epicHeader = epicContainer ? epicContainer.querySelector('.toggle-epic-header') : null;
+                    const epicCode = epicCodeTag ? epicCodeTag.textContent.trim() : '';
+                    const epicName = epicHeader ? epicHeader.textContent.replace(epicCode, '').replace(/[▼►]/g, '').trim() : '';
+                    
+                    const usCodeTag = story.querySelector('.us-code-tag');
+                    const usTitleTag = story.querySelector('.us-title');
+                    const usCode = usCodeTag ? usCodeTag.textContent.trim() : '';
+                    const usDescription = usTitleTag ? usTitleTag.textContent.trim() : '';
+                    
+                    const teamNumber = story.dataset.team || 'N/A';
+                    const complexity = story.dataset.complexity || '';
+                    
+                    const line = [
+                        cleanText(moduleCode),
+                        cleanText(moduleName),
+                        cleanText(epicCode),
+                        cleanText(epicName),
+                        cleanText(usCode),
+                        cleanText(usDescription),
+                        'Équipe ' + teamNumber,
+                        'Complexité ' + complexity
+                    ].join(';');
+                    
+                    csv += line + "\\r\\n";
+                });
+
+                const filename = 'export_us_repartition.csv';
+                const blob = new Blob(["\\uFEFF" + csv], { type: 'text/csv;charset=utf-8' });
+
+                const link = document.createElement("a");
+                if (link.download !== undefined) { 
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute("href", url);
+                    link.setAttribute("download", filename);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else {
+                    alert("Votre navigateur ne supporte pas le téléchargement automatique de fichiers.");
+                }
+            }
+            
+            attachFilterListeners();
+        `;
+
+        newScript.textContent = filterAndExportCode;
+        doc.body.appendChild(newScript);
+      }
+
+      /** Fonction principale pour générer le fichier de répartition */
+      async function generateAndDownload() {
+        const numTeams = parseInt(
+          document.getElementById("team-count-select").value,
+          10
+        );
+        if (numTeams === 0) {
+          alert("Veuillez sélectionner un nombre d'équipes.");
+          return;
+        }
+
+        const newDoc = document.cloneNode(true);
+
+        // 1. CALCUL DES STATS GLOBALES ET CHARGE DE TRAVAIL
+        const allStories = Array.from(newDoc.querySelectorAll(".user-story"));
+        const totalStories = allStories.length;
+        const totalModules =
+          newDoc.querySelectorAll(".module-container").length;
+        const totalEpics = newDoc.querySelectorAll(".epic-container").length;
+
+        const storiesByComplexity = { Basse: [], Moyenne: [], Élevée: [] };
+        let complexityBasseCount = 0;
+        let complexityMoyenneCount = 0;
+        let complexityEleveeCount = 0;
+
+        allStories.forEach((story) => {
+          const complexityTag = story.querySelector(".complexity-tag");
+          if (complexityTag) {
+            const complexityText = complexityTag.textContent;
+            const label = complexityToLabel(complexityText);
+            if (label === "Basse") {
+              storiesByComplexity.Basse.push(story);
+              complexityBasseCount++;
+            } else if (label === "Moyenne") {
+              storiesByComplexity.Moyenne.push(story);
+              complexityMoyenneCount++;
+            } else {
+              storiesByComplexity["Élevée"].push(story);
+              complexityEleveeCount++;
+            }
+            story.dataset.complexity = label;
+          }
+        });
+
+        const teamWorkload = {};
+        for (let i = 1; i <= numTeams; i++) {
+          teamWorkload[i] = { count: 0, complexity: 0 };
+        }
+
+        const shuffleArray = (array) => {
+          for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+          }
+          return array;
+        };
+
+        // 2. DISTRIBUTION AVEC MISE À JOUR DE LA CHARGE DE TRAVAIL
+        const distributeAndCalculate = (stories, complexityValue) => {
+          shuffleArray(stories);
+
+          stories.forEach((story, index) => {
+            const teamNumber = (index % numTeams) + 1;
+            story.dataset.team = teamNumber;
+
+            const teamTag = document.createElement("span");
+            teamTag.className = "team-tag";
+            teamTag.textContent = `Équipe ${teamNumber}`;
+            story.appendChild(teamTag);
+
+            teamWorkload[teamNumber].count++;
+            teamWorkload[teamNumber].complexity += complexityValue;
+          });
+        };
+
+        distributeAndCalculate(
+          storiesByComplexity.Basse,
+          complexityWeight("Basse")
+        );
+        distributeAndCalculate(
+          storiesByComplexity.Moyenne,
+          complexityWeight("Moyenne")
+        );
+        distributeAndCalculate(
+          storiesByComplexity["Élevée"],
+          complexityWeight("Élevée")
+        );
+
+        // 3. ENCAPSULATION ET GÉNÉRATION DES STATS HTML
+        const stats = {
+          totalStories,
+          totalModules,
+          totalEpics,
+          complexityBasseCount,
+          complexityMoyenneCount,
+          complexityEleveeCount,
+          teamWorkload,
+          numTeams,
+        };
+
+        const getStatsHTML = (stats) => {
+          let html = `
+            <div class="stats-header">
+                <span class="icon"></span> Statistiques du Projet et Répartition (${
+                  stats.numTeams
+                } Équipes)
+            </div>
+            <div class="stats-content">
+                <div class="stats-grid">
+                    <div class="stat-card module-color">
+                        <div class="stat-value">${stats.totalModules}</div>
+                        <div class="stat-label">Modules</div>
+                    </div>
+                    <div class="stat-card epic-color">
+                        <div class="stat-value">${stats.totalEpics}</div>
+                        <div class="stat-label">Epics</div>
+                    </div>
+                    <div class="stat-card us-color">
+                        <div class="stat-value">${stats.totalStories}</div>
+                        <div class="stat-label">User Stories</div>
+                    </div>
+                </div>
+                
+                <h3>Complexité Totale (Répartition)</h3>
+                <div class="complexity-summary-cards">
+                    <div class="complexity-card c1">
+                        <div class="complexity-card-value">${
+                          stats.complexityBasseCount
+                        } US</div>
+                        <div class="complexity-card-label">Basse (${(
+                          (stats.complexityBasseCount / stats.totalStories) *
+                          100
+                        ).toFixed(1)}%)</div>
+                    </div>
+                    <div class="complexity-card c2">
+                        <div class="complexity-card-value">${
+                          stats.complexityMoyenneCount
+                        } US</div>
+                        <div class="complexity-card-label">Moyenne (${(
+                          (stats.complexityMoyenneCount / stats.totalStories) *
+                          100
+                        ).toFixed(1)}%)</div>
+                    </div>
+                    <div class="complexity-card" style="background-color:#dc3545;">
+                        <div class="complexity-card-value">${
+                          stats.complexityEleveeCount
+                        } US</div>
+                        <div class="complexity-card-label">Élevée (${(
+                          (stats.complexityEleveeCount / stats.totalStories) *
+                          100
+                        ).toFixed(1)}%)</div>
+                    </div>
+                </div>
+
+                <h3>Charge de Travail par Équipe (Pts Complexité / US)</h3>
+                <div class="stats-grid-teams">`;
+
+          for (let i = 1; i <= stats.numTeams; i++) {
+            const wl = stats.teamWorkload[i];
+            const dynamicColor = `hsl(${(i * 360) / stats.numTeams}, 70%, 50%)`;
+
+            html += `
+                    <div class="team-card" style="background-color: ${dynamicColor};">
+                        <div class="team-card-label">Équipe ${i}</div>
+                        <div class="team-card-value">${wl.complexity} pts / ${wl.count} US</div>
+                    </div>`;
+          }
+
+          html += `</div>
+            </div>
+            `;
+
+          return html;
+        };
+
+        // 4. INJECTION DANS LE DOCUMENT CLONÉ
+        injectCSS(newDoc);
+        injectStatsHTML(newDoc, stats, getStatsHTML);
+        injectFiltersHTML(newDoc, numTeams);
+        injectFiltersJS(newDoc);
+
+        // Retrait du panneau admin et de la barre de recherche originale
+        const adminPanel = newDoc.querySelector(".admin-panel");
+        if (adminPanel) {
+          adminPanel.remove();
+        }
+        const searchBar = newDoc.querySelector(".search-bar");
+        if (searchBar) {
+          searchBar.remove();
+        }
+
+        // Sérialisation et téléchargement
+        const finalHtml =
+          "<!DOCTYPE html>\n" + newDoc.documentElement.outerHTML;
+        const blob = new Blob([finalHtml], { type: "text/html;charset=utf-8" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `features_${numTeams}_equipes.html`;
+        link.click();
+
+        alert(
+          `Fichier features_${numTeams}_equipes.html généré avec succès!\n\n` +
+            `Total: ${totalStories} US réparties sur ${numTeams} équipes.\n` +
+            `Basse: ${complexityBasseCount} US\n` +
+            `Moyenne: ${complexityMoyenneCount} US\n` +
+            `Élevée: ${complexityEleveeCount} US`
+        );
+      }
+
+      // Attacher le gestionnaire au bouton de génération
+      document.addEventListener("DOMContentLoaded", () => {
+        const generateButton = document.getElementById("generate-button");
+        if (generateButton) {
+          generateButton.addEventListener("click", generateAndDownload);
+        }
+      });
+
+      // Chargement initial depuis le CSV
+      loadAndRender();
+    </script>
+  
+
+<script>
+            function applyCombinedFilters(silent = false) {
+                const stories = document.querySelectorAll('.user-story');
+                
+                const activeTeamBtn = document.querySelector('.filters-bar button[id^="filter-btn-team-"].active');
+                const teamFilter = activeTeamBtn ? (activeTeamBtn.id.includes('all') ? 'all' : activeTeamBtn.id.replace('filter-btn-team-', '')) : 'all';
+                
+                const complexitySelect = document.getElementById('complexity-select-filter');
+                const complexityFilter = complexitySelect ? complexitySelect.value : 'all';
+
+                stories.forEach(story => {
+                    const teamMatch = teamFilter === 'all' || story.dataset.team === teamFilter;
+                    const complexityMatch = complexityFilter === 'all' || story.dataset.complexity === complexityFilter;
+                    story.classList.toggle('hidden-by-filter', !(teamMatch && complexityMatch));
+                });
+                
+                document.querySelectorAll('.epic-container').forEach(ep => {
+                    const hasVisible = ep.querySelectorAll('.user-story:not(.hidden-by-filter)').length > 0;
+                    ep.classList.toggle('hidden-by-filter', !hasVisible);
+                });
+                document.querySelectorAll('.module-container').forEach(mod => {
+                    const hasVisible = mod.querySelectorAll('.user-story:not(.hidden-by-filter)').length > 0;
+                    mod.classList.toggle('hidden-by-filter', !hasVisible);
+                });
+                
+                if (!silent) {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }
+
+            function attachFilterListeners() {
+                const teamButtons = document.querySelectorAll('.filters-bar button[id^="filter-btn-team-"]:not(#export-csv-btn)');
+                teamButtons.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.filters-bar button[id^="filter-btn-team-"]').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        applyCombinedFilters();
+                    });
+                });
+                
+                document.getElementById('complexity-select-filter')?.addEventListener('change', applyCombinedFilters);
+
+                document.querySelector('.stats-container .stats-header')?.addEventListener('click', (event) => {
+                    event.currentTarget.closest('.stats-container').classList.toggle('collapsed');
+                });
+
+                const csvBtn = document.getElementById('export-csv-btn');
+                if(csvBtn) {
+                    csvBtn.addEventListener('click', exportToCSV);
+                }
+
+                document.querySelectorAll('.toggle-module-header').forEach(h => {
+                    h.onclick = () => h.parentElement.classList.toggle('collapsed');
+                });
+                document.querySelectorAll('.toggle-epic-header').forEach(h => {
+                    h.onclick = () => h.parentElement.classList.toggle('collapsed');
+                });
+            }
+
+            function exportToCSV() {
+                let csv = "Code module;Module;Code Epic;Epic;Code US;US;Équipe;Complexité\r\n";
+                
+                const visibleStories = document.querySelectorAll('.user-story:not(.hidden-by-filter)');
+
+                if (visibleStories.length === 0) {
+                    alert("Aucune User Story visible à exporter.");
+                    return;
+                }
+                
+                visibleStories.forEach(story => {
+                    const cleanText = (text) => text ? text.trim().replace(/"/g, '""') : '';
+                    
+                    const moduleContainer = story.closest('.module-container');
+                    const moduleHeader = moduleContainer ? moduleContainer.querySelector('.toggle-module-header').textContent : '';
+                    const moduleMatch = moduleHeader.match(/([A-Z]+\d+)\s*:\s*(.+)/);
+                    const moduleCode = moduleMatch ? moduleMatch[1].trim() : '';
+                    const moduleName = moduleMatch ? moduleMatch[2].trim() : '';
+                    
+                    const epicContainer = story.closest('.epic-container');
+                    const epicCodeTag = epicContainer ? epicContainer.querySelector('.epic-code-tag') : null;
+                    const epicHeader = epicContainer ? epicContainer.querySelector('.toggle-epic-header') : null;
+                    const epicCode = epicCodeTag ? epicCodeTag.textContent.trim() : '';
+                    const epicName = epicHeader ? epicHeader.textContent.replace(epicCode, '').replace(/[▼►]/g, '').trim() : '';
+                    
+                    const usCodeTag = story.querySelector('.us-code-tag');
+                    const usTitleTag = story.querySelector('.us-title');
+                    const usCode = usCodeTag ? usCodeTag.textContent.trim() : '';
+                    const usDescription = usTitleTag ? usTitleTag.textContent.trim() : '';
+                    
+                    const teamNumber = story.dataset.team || 'N/A';
+                    const complexity = story.dataset.complexity || '';
+                    
+                    const line = [
+                        cleanText(moduleCode),
+                        cleanText(moduleName),
+                        cleanText(epicCode),
+                        cleanText(epicName),
+                        cleanText(usCode),
+                        cleanText(usDescription),
+                        'Équipe ' + teamNumber,
+                        'Complexité ' + complexity
+                    ].join(';');
+                    
+                    csv += line + "\r\n";
+                });
+
+                const filename = 'export_us_repartition.csv';
+                const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8' });
+
+                const link = document.createElement("a");
+                if (link.download !== undefined) { 
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute("href", url);
+                    link.setAttribute("download", filename);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else {
+                    alert("Votre navigateur ne supporte pas le téléchargement automatique de fichiers.");
+                }
+            }
+            
+            attachFilterListeners();
+        </script></body></html>

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Architecture et Environnement de Test Alfresco</title>
+    <link rel="icon" type="image/png" href="images/alfresco_icon.png" />
+
+    <!-- Script de protection d'accès - Vérification de l'authentification -->
+    <script src="../../assets/js/auth-guard.js"></script>
+
+    <style>
+      /* Styles généraux (similaires à la charte graphique précédente) */
+      body {
+        font-family: "Open Sans", Arial, sans-serif;
+        margin: 0;
+        padding: 30px;
+        background-color: #f0f2f5;
+        color: #333;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        color: #1e3a8a; /* Bleu foncé */
+        text-align: center;
+        margin-bottom: 40px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #1e3a8a;
+        font-size: 2.2em; /* Ajustement de la taille du titre */
+      }
+
+      h2 {
+        color: #10b981; /* Vert de marque */
+        border-left: 5px solid #1e3a8a;
+        padding-left: 10px;
+        margin-top: 30px;
+        margin-bottom: 20px;
+        font-size: 1.6em;
+      }
+
+      h3 {
+        color: #1e3a8a;
+        margin-top: 25px;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #e5e7eb;
+        padding-bottom: 5px;
+        font-size: 1.2em;
+      }
+
+      /* Style pour les sections (cartes) */
+      .section-card {
+        background-color: #ffffff;
+        padding: 20px 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+
+      /* Style pour les paires clé-valeur (Configuration Serveur) */
+      .config-list {
+        list-style: none;
+        padding: 0;
+      }
+
+      .config-list li {
+        padding: 8px 0;
+        border-bottom: 1px dashed #e5e7eb;
+        display: flex;
+        align-items: center;
+      }
+
+      .config-list li:last-child {
+        border-bottom: none;
+      }
+
+      .config-list .key {
+        font-weight: 700;
+        color: #1e3a8a;
+        width: 40%;
+        min-width: 150px;
+      }
+
+      .config-list .value {
+        width: 60%;
+        color: #333;
+        font-family: "Courier New", monospace;
+        background-color: #f7f7f9;
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* Styles de la liste d'outils (Alignement amélioré) */
+      .tool-list {
+        list-style: none;
+        padding: 0;
+      }
+
+      .tool-list li {
+        padding: 10px 0;
+        border-bottom: 1px dashed #e5e7eb;
+        /* Utilisation de Flexbox pour un alignement propre */
+        display: flex;
+        align-items: flex-start;
+      }
+      .tool-list li:last-child {
+        border-bottom: none;
+      }
+
+      .tool-list .category {
+        font-weight: 700;
+        color: #1e3a8a;
+        /* Largeur fixe pour l'alignement des descriptions */
+        min-width: 200px;
+        margin-right: 20px;
+        flex-shrink: 0; /* Empêche de rétrécir */
+        padding-top: 2px; /* Ajustement visuel */
+      }
+      .tool-list .tools {
+        font-style: italic;
+        color: #333;
+        flex-grow: 1; /* Prend l'espace restant */
+      }
+
+      /* Style pour les noms d'outils et termes clés */
+      .tools strong {
+        font-style: normal;
+        color: #1e3a8a;
+        padding: 0 2px;
+      }
+
+      .note {
+        background-color: #fef3c7;
+        border-left: 5px solid #f59e0b;
+        padding: 15px;
+        border-radius: 4px;
+        margin-top: 20px;
+        color: #583b06;
+      }
+      .note strong {
+        color: #f59e0b;
+      }
+
+      /* Style spécifique pour le lien d'API */
+      .api-link-info {
+        background-color: #e0f2f1;
+        border: 1px solid #10b981;
+        padding: 10px;
+        border-radius: 6px;
+        margin-top: 15px;
+        font-size: 0.95em;
+      }
+      .api-link-info a {
+        color: #1e3a8a;
+        text-decoration: underline;
+        font-weight: 600;
+      }
+      footer p {
+        margin: 10px 0 0 0;
+        font-size: 0.8em;
+        color: #000000;
+        text-align: center;
+      }
+
+      /* ======================================================= */
+      /* MEDIA QUERIES pour l'affichage mobile (max-width: 600px)*/
+      /* ======================================================= */
+      @media screen and (max-width: 600px) {
+        body {
+          padding: 15px;
+        }
+
+        h1 {
+          font-size: 1.6em;
+        }
+
+        h2 {
+          font-size: 1.4em;
+        }
+
+        .section-card {
+          padding: 15px;
+        }
+
+        .config-list li {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .config-list .key {
+          width: 100%;
+          margin-bottom: 5px;
+          min-width: auto;
+        }
+
+        .config-list .value {
+          width: 100%;
+          padding-left: 0;
+        }
+
+        /* Ajustement pour la liste d'outils sur mobile */
+        .tool-list li {
+          flex-direction: column; /* Empiler la catégorie et les outils */
+          align-items: flex-start;
+        }
+
+        .tool-list .category {
+          min-width: auto;
+          margin-bottom: 5px;
+        }
+      }
+      /* ================================== */
+      /* === STYLES DU LIEN ACCUEIL === */
+      /* ================================== */
+
+      .home-link {
+        /* Positionnement */
+        position: fixed; /* Reste visible même en défilement */
+        top: 20px;
+        left: 20px;
+        z-index: 1000; /* Assure qu'il est au-dessus des autres éléments */
+
+        /* Style du texte */
+        font-size: 0.95em;
+        font-weight: 600;
+        text-decoration: none;
+        color: #495057; /* Couleur de texte neutre */
+
+        /* Style du bouton/lien */
+        padding: 8px 15px;
+        border-radius: 20px; /* Bords arrondis pour l'effet soigné */
+        background-color: #f8f9fa; /* Fond très clair */
+        border: 1px solid #dee2e6;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+        /* Transitions pour le côté soigné */
+        transition: all 0.2s ease-in-out;
+      }
+
+      .home-link:hover {
+        background-color: #e9ecef; /* Changement subtil au survol */
+        color: #007bff; /* Met l'accent sur la couleur primaire au survol */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Ombre plus marquée */
+        transform: translateY(-1px); /* Effet léger de "levée" */
+      }
+
+      /* Option pour les petits écrans (discrétion) */
+      @media screen and (max-width: 768px) {
+        .home-link {
+          font-size: 0.85em;
+          padding: 5px 10px;
+          top: 10px;
+          left: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a href="menu.html" class="home-link" title="Retour à la page d'accueil">
+      🏠 Accueil
+    </a>
+    <div class="container">
+      <h1>Architecture et Environnement de Test Redmine</h1>
+
+      <div class="section-card">
+        <h2>Serveur de Test Principal</h2>
+        <p style="font-size: 1.1em; font-weight: 600">
+          Application à tester : Redmine
+          <span style="font-weight: bold; color: #ef4444"
+            >(Version 5.1.1.stable)</span
+          >
+        </p>
+
+        <h3>Accès et État du Serveur</h3>
+        <ul class="config-list">
+          <li style="background-color: #d1fae5; border-color: #10b981">
+            <span class="key">Statut actuel</span>
+            <span
+              class="value"
+              style="background-color: #10b981; color: white; font-weight: bold"
+              >running</span
+            >
+          </li>
+          <li>
+            <span class="key">Tunnel d'accès (HTTP)</span>
+            <span class="value">205.236.44.131:80</span>
+          </li>
+          <li>
+            <span class="key">Session SSH</span>
+            <span class="value">mercure.minilab.bdeb.qc.ca</span>
+          </li>
+        </ul>
+
+        <h3>Configuration Technique (VM Proxmox)</h3>
+        <ul class="config-list">
+          <li>
+            <span class="key">Processeurs</span>
+            <span class="value">2 (1 sockets, 2 cores) [host]</span>
+          </li>
+          <li>
+            <span class="key">Mémoire Allouée</span>
+            <span class="value">2.00 GiB</span>
+          </li>
+          <li>
+            <span class="key">Utilisation Mémoire Actuelle</span>
+            <span class="value" style="color: #ef4444; font-weight: bold"
+              >38.32% (784.80 Mio)</span
+            >
+          </li>
+          <li>
+            <span class="key">Disque Dur</span>
+            <span class="value">10G (local-lvm:vm-302-disk-0)</span>
+          </li>
+          <li>
+            <span class="key">Contrôleur Réseau/SCSI</span>
+            <span class="value">VirtIO / VirtIO SCSI single</span>
+          </li>
+          <li>
+            <span class="key">Machine/BIOS</span>
+            <span class="value">Default (i440fx) / Default (SeaBIOS)</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="section-card">
+        <h2>Outillage Qualité</h2>
+        <ul class="tool-list">
+          <li>
+            <span class="category">Gestion des Exigences</span>
+            <span class="tools"
+              ><strong>Jira</strong> (Épics, User Stories),
+              <strong>Confluence</strong> (Documentation)</span
+            >
+          </li>
+          <li>
+            <span class="category">Gestion des Tests et Anomalies</span>
+            <span class="tools"
+              ><strong>Qality</strong> (Cas de Tests, Exécution, Rapports
+              d'exécution), <strong>Jira</strong> (Fiches d'anomalies)</span
+            >
+          </li>
+          <li>
+            <span class="category">Tests Fonctionnels</span>
+            <span class="tools"><strong>Robot Framework</strong></span>
+          </li>
+          <li>
+            <span class="category">Cadre d'Exécution Robot</span>
+            <span class="tools"
+              ><strong>Visual Studio Code</strong> et
+              <strong>Python</strong></span
+            >
+          </li>
+        </ul>
+      </div>
+
+      <div class="section-card">
+        <h2>Contingence et Communication</h2>
+
+        <h3>Plan de Contingence (Sauvegarde)</h3>
+        <div class="note">
+          Chaque testeur dispose d'une
+          <strong>machine virtuelle locale</strong> (VM) contenant une instance
+          de Redmine (v. 5.1.1.stable). Cette VM doit être utilisée comme
+          <strong>environnement de secours</strong> en cas de panne ou
+          d'indisponibilité prolongée du serveur de test principal.
+        </div>
+
+        <h3>Communication et Suivi</h3>
+        <ul class="config-list">
+          <li>
+            <span class="key">Échanges Rapides</span>
+            <span class="value">Teams</span>
+          </li>
+          <li>
+            <span class="key">Rencontres</span>
+            <span class="value">Teams (Daily Scrum Meetings, Revues)</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <footer>
+      <p>
+        &copy; Talel Zid | Version 1.0 — Octobre 2025.
+        <br />Pour usage personnel ou éducatif seulement.
+      </p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plan de Projet de Test - Redmine (Timeline V2 - Responsive)</title>
+    <link
+      rel="icon"
+      type="image/png"
+      href="../../assets/images/Redmine_icon.jpg"
+    />
+
+    <!-- Script de protection d'accès - Vérification de l'authentification -->
+    <script src="../../assets/js/auth-guard.js"></script>
+
+    <style>
+      /* Styles généraux */
+      body {
+        font-family: "Open Sans", Arial, sans-serif;
+        margin: 0;
+        padding: 30px;
+        background-color: #f0f2f5;
+        color: #333;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        color: #1e3a8a; /* Bleu foncé */
+        text-align: center;
+        margin-bottom: 40px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #1e3a8a;
+      }
+
+      /* Styles de la Chronologie (Timeline) */
+      .timeline {
+        position: relative;
+        padding: 20px 0;
+      }
+
+      /* Ligne verticale de la chronologie (Desktop/Tablet) */
+      .timeline::after {
+        content: "";
+        position: absolute;
+        width: 4px;
+        background-color: #9ca3af; /* Gris de la ligne */
+        top: 0;
+        bottom: 0;
+        left: 50%; /* Centré sur desktop */
+        margin-left: -2px;
+      }
+
+      /* Carte de Sprint (Desktop/Tablet) */
+      .sprint-card {
+        padding: 10px 40px;
+        position: relative;
+        background-color: inherit;
+        width: 40%; /* Demi-largeur sur desktop */
+        margin-bottom: 40px;
+      }
+
+      /* Positionnement des cartes (Gauche/Droite) (Desktop/Tablet) */
+      .sprint-card:nth-child(even) {
+        left: 50%;
+      }
+      .sprint-card:nth-child(odd) {
+        left: 0;
+      }
+
+      /* Contenu de la carte */
+      .sprint-content {
+        padding: 20px 30px;
+        background-color: #ffffff;
+        position: relative;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        border-top: 5px solid #10b981; /* Bande de couleur vive */
+        transition: transform 0.3s ease;
+      }
+
+      .sprint-card:hover .sprint-content {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      /* Flèches pour relier la carte à la ligne (Desktop/Tablet) */
+      .sprint-card:nth-child(odd) .sprint-content::after {
+        content: " ";
+        height: 0;
+        position: absolute;
+        top: 22px;
+        width: 0;
+        z-index: 1;
+        right: -15px;
+        border: medium solid white;
+        border-width: 10px 0 10px 10px;
+        border-color: transparent transparent transparent white;
+      }
+
+      .sprint-card:nth-child(even) .sprint-content::after {
+        content: " ";
+        height: 0;
+        position: absolute;
+        top: 22px;
+        width: 0;
+        z-index: 1;
+        left: -15px;
+        border: medium solid white;
+        border-width: 10px 10px 10px 0;
+        border-color: transparent white transparent transparent;
+      }
+
+      /* Cercle sur la ligne (Point de repère) (Desktop/Tablet) */
+      .sprint-card::after {
+        content: "";
+        position: absolute;
+        width: 25px;
+        height: 25px;
+        right: -17px; /* Positionnement à droite pour les cartes impaires */
+        background-color: #10b981; /* Vert de marque */
+        border: 4px solid #d1fae5;
+        top: 15px;
+        border-radius: 50%;
+        z-index: 1;
+      }
+
+      .sprint-card:nth-child(even)::after {
+        left: -17px; /* Positionnement à gauche pour les cartes paires */
+      }
+
+      /* En-tête de la carte (Sprint et Date) */
+      .sprint-header {
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .sprint-title {
+        font-size: 1.4em;
+        color: #1e3a8a;
+        font-weight: 700;
+      }
+
+      .sprint-date {
+        color: #ef4444; /* Rouge pour la date */
+        font-size: 1em;
+        font-weight: 600;
+        margin-top: 5px;
+      }
+
+      /* NOUVEAU STYLE pour les sous-titres des phases */
+      .phase-title {
+        color: #1e3a8a;
+        font-size: 1.1em;
+        margin-top: 15px;
+        margin-bottom: 8px;
+        padding-bottom: 3px;
+        border-bottom: 2px solid #e0f2f1; /* Sous-lignement léger */
+        font-weight: 700;
+      }
+      /* FIN NOUVEAU STYLE */
+
+      /* Liste des tâches */
+      .task-list {
+        list-style-type: none;
+        padding-left: 0;
+      }
+
+      .task-list li {
+        position: relative;
+        margin-bottom: 8px;
+        padding-left: 20px;
+        line-height: 1.4;
+      }
+
+      .task-list li::before {
+        content: "✓"; /* Symbole de puce */
+        color: #10b981;
+        font-weight: bold;
+        position: absolute;
+        left: 0;
+      }
+
+      /* Mise en évidence des livrables (mots clés) */
+      .key-deliverable {
+        font-weight: bold;
+        color: #9ca3af;
+        background-color: #f3f4f6;
+        padding: 1px 4px;
+        border-radius: 4px;
+      }
+      footer p {
+        margin: 10px 0 0 0;
+        font-size: 0.8em;
+        color: #000000;
+        text-align: center;
+      }
+
+      /* ======================================================= */
+      /* MEDIA QUERIES pour l'affichage mobile (max-width: 600px)*/
+      /* ======================================================= */
+      @media screen and (max-width: 600px) {
+        body {
+          padding: 15px; /* Réduire le padding sur mobile */
+        }
+
+        .container {
+          /* S'assurer que le conteneur utilise l'espace disponible */
+          max-width: 100%;
+        }
+
+        h1 {
+          font-size: 1.8em; /* Ajuster la taille du titre */
+        }
+
+        /* 1. Ligne verticale de la chronologie : Déplacer à gauche */
+        .timeline::after {
+          left: 30px; /* Déplacer la ligne verticale à gauche */
+          margin-left: 0;
+        }
+
+        /* 2. Carte de Sprint : Pleine largeur et positionnement à gauche */
+        .sprint-card {
+          width: 95%; /* Pleine largeur (presque) */
+          padding: 10px 0 10px 60px; /* Padding à gauche pour l'espace du marqueur */
+          left: 0 !important; /* Forcer le positionnement à gauche */
+          margin-bottom: 30px;
+        }
+
+        /* 3. Cercle sur la ligne : Positionner à gauche */
+        .sprint-card::after {
+          left: 22px !important; /* Positionner le cercle près de la nouvelle ligne */
+          right: auto; /* Supprimer l'ancien positionnement */
+        }
+
+        /* 4. Flèches : Supprimer les flèches ou les adapter pour pointer à droite */
+        .sprint-content::after {
+          /* Supprimer les flèches sur mobile pour un look plus simple */
+          content: none !important;
+        }
+
+        /* Retirer les ombres au survol sur mobile pour améliorer la performance/l'expérience tactile */
+        .sprint-card:hover .sprint-content {
+          transform: none;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Garder l'ombre par défaut */
+        }
+      }
+      /* ================================== */
+      /* === STYLES DU LIEN ACCUEIL === */
+      /* ================================== */
+
+      .home-link {
+        /* Positionnement */
+        position: fixed; /* Reste visible même en défilement */
+        top: 20px;
+        left: 20px;
+        z-index: 1000; /* Assure qu'il est au-dessus des autres éléments */
+
+        /* Style du texte */
+        font-size: 0.95em;
+        font-weight: 600;
+        text-decoration: none;
+        color: #495057; /* Couleur de texte neutre */
+
+        /* Style du bouton/lien */
+        padding: 8px 15px;
+        border-radius: 20px; /* Bords arrondis pour l'effet soigné */
+        background-color: #f8f9fa; /* Fond très clair */
+        border: 1px solid #dee2e6;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+        /* Transitions pour le côté soigné */
+        transition: all 0.2s ease-in-out;
+      }
+
+      .home-link:hover {
+        background-color: #e9ecef; /* Changement subtil au survol */
+        color: #007bff; /* Met l'accent sur la couleur primaire au survol */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Ombre plus marquée */
+        transform: translateY(-1px); /* Effet léger de "levée" */
+      }
+
+      /* Option pour les petits écrans (discrétion) */
+      @media screen and (max-width: 768px) {
+        .home-link {
+          font-size: 0.85em;
+          padding: 5px 10px;
+          top: 10px;
+          left: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a href="menu.html" class="home-link" title="Retour à la page d'accueil">
+      🏠 Accueil
+    </a>
+    <div class="container">
+      <h1>Plan de projet de test de l'application Redmine</h1>
+
+      <div class="timeline">
+        <div class="sprint-card">
+          <div class="sprint-content">
+            <div class="sprint-header">
+              <div class="sprint-title">Semaine 1</div>
+              <div class="sprint-date" data-sprint-id="1">
+                Semaine du 12 janvier
+              </div>
+            </div>
+
+            <h4 class="phase-title">Interpréter et comprendre</h4>
+            <ul class="task-list">
+              <li>Interpréter le contexte du projet</li>
+              <li>Comprendre le cadre du projet : objectifs, participants.</li>
+              <li>Constituer les équipes.</li>
+              <li>
+                Découvrir les requis du projet et prendre connaissance de
+                l'estimation du nombre de cas de test par exigence.
+              </li>
+              <li>Étude des documents reliés à l'application à tester.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="sprint-card">
+          <div class="sprint-content">
+            <div class="sprint-header">
+              <div class="sprint-title">Semaine 2</div>
+              <div class="sprint-date" data-sprint-id="2">
+                Semaine du 19 janvier
+              </div>
+            </div>
+
+            <h4 class="phase-title">Élaborer la stratégie de tests</h4>
+            <ul class="task-list">
+              <li>
+                Analyser les exigences et identifier les zones critiques à
+                tester.
+              </li>
+              <li>
+                Définir les types de tests à réaliser (fonctionnels,
+                non-fonctionnels, régression).
+              </li>
+              <li>
+                Sélectionner et configurer les outils de gestion de tests (Jira,
+                Xray, Zephyr).
+              </li>
+              <li>
+                Établir les critères d'entrée et de sortie pour chaque phase de
+                test.
+              </li>
+              <li>
+                Identifier les risques et définir l'approche de mitigation.
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="sprint-card">
+          <div class="sprint-content">
+            <div class="sprint-header">
+              <div class="sprint-title">Semaine 3</div>
+              <div class="sprint-date" data-sprint-id="3">
+                Semaine du 26 janvier
+              </div>
+            </div>
+
+            <h4 class="phase-title">Élaborer le plan de tests</h4>
+            <ul class="task-list">
+              <li>
+                Rédiger le document de plan de tests selon les standards IEEE
+                829.
+              </li>
+              <li>
+                Définir le périmètre des tests et les exigences couvertes.
+              </li>
+              <li>Structurer les scénarios de tests et les cas de test.</li>
+              <li>
+                Établir le calendrier d'exécution et les jalons de validation.
+              </li>
+              <li>
+                Documenter les ressources nécessaires et les responsabilités.
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="sprint-card">
+          <div class="sprint-content">
+            <div class="sprint-header">
+              <div class="sprint-title">Semaines 4 et 5</div>
+              <div class="sprint-date" data-sprint-id="4">
+                Semaines du 3 et du 9 février
+              </div>
+            </div>
+            <h4 class="phase-title">
+              Rédiger les Epics, les User stories et les critères d'acceptation
+            </h4>
+            <ul class="task-list">
+              <li>
+                Identifier et rédiger les Epics à partir des fonctionnalités de
+                Redmine.
+              </li>
+              <li>Décomposer les Epics en User Stories détaillées.</li>
+              <li>
+                Définir les critères d'acceptation (INVEST) pour chaque User
+                Story.
+              </li>
+              <li>
+                Rédiger les critères d'acceptation au format Gherkin
+                (Given-When-Then).
+              </li>
+              <li>Valider les User Stories avec les parties prenantes.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="sprint-card">
+          <div class="sprint-content">
+            <div class="sprint-header">
+              <div class="sprint-title">Semaines 6 et 7</div>
+              <div class="sprint-date" data-sprint-id="5">
+                Semaines du 16 et du 23 février
+              </div>
+            </div>
+
+            <h4 class="phase-title">Rédiger les cas de tests</h4>
+            <ul class="task-list">
+              <li>
+                Rédiger les cas de test détaillés à partir des User Stories.
+              </li>
+              <li>
+                Définir les préconditions et les données de test nécessaires.
+              </li>
+              <li>
+                Documenter les étapes d'exécution et les résultats attendus.
+              </li>
+              <li>
+                Rédiger les critères de succès et les postconditions pour chaque
+                test.
+              </li>
+              <li>
+                Organiser les cas de test par priorité et par module
+                fonctionnel.
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="sprint-card">
+          <div class="sprint-content">
+            <div class="sprint-header">
+              <div class="sprint-title">Semaines 8 et 9</div>
+              <div class="sprint-date" data-sprint-id="6">
+                Semaines du 2 et du 9 mars
+              </div>
+            </div>
+
+            <h4 class="phase-title">Préparer les données de tests</h4>
+            <ul class="task-list">
+              <li>
+                Identifier les besoins en données de test pour chaque cas de
+                test.
+              </li>
+              <li>
+                Créer les jeux de données de test (datapools) pour les
+                différents scénarios.
+              </li>
+              <li>
+                Préparer les fichiers de données (CSV, JSON, Excel) pour les
+                tests.
+              </li>
+              <li>
+                Utiliser la technique pairwise pour optimiser la génération des
+                données de test.
+              </li>
+              <li>Valider l'intégrité et la conformité des données de test.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="sprint-card">
+          <div class="sprint-content">
+            <div class="sprint-header">
+              <div class="sprint-title">Semaine 10</div>
+              <div class="sprint-date" data-sprint-id="7">
+                Semaine du 16 mars
+              </div>
+            </div>
+
+            <h4 class="phase-title">
+              Préparation de la matrice de traçabilité
+            </h4>
+            <ul class="task-list">
+              <li>
+                Créer la matrice de traçabilité Exigences → User Stories → Cas
+                de test.
+              </li>
+              <li>
+                Vérifier la couverture complète de toutes les exigences par les
+                tests.
+              </li>
+              <li>
+                Identifier les lacunes de couverture et les zones non testées.
+              </li>
+              <li>Documenter les liens bidirectionnels entre artefacts.</li>
+              <li>Valider la matrice avec les parties prenantes.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer>
+      <p>
+        &copy; Talel Zid | Version 3.0 — Janvier 2026.
+        <br />Pour usage personnel ou éducatif seulement.
+      </p>
+    </footer>
+  </body>
+</html>
+<script>
+  // Injection dynamique des dates depuis config/timeline.json
+  (async function loadTimelineDates() {
+    try {
+      const response = await fetch("../../config/timeline.json");
+      if (!response.ok) {
+        console.warn("timeline.json non trouvé, dates par défaut conservées");
+        return;
+      }
+      const data = await response.json();
+      if (!data || !Array.isArray(data.sprints)) return;
+      data.sprints.forEach((sprint) => {
+        const el = document.querySelector(`[data-sprint-id="${sprint.id}"]`);
+        if (el && sprint.date) {
+          el.textContent = `Semaine du ${sprint.date}`;
+        }
+      });
+    } catch (e) {
+      console.warn("Erreur chargement timeline.json:", e);
+    }
+  })();
+</script>
