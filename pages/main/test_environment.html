@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Architecture et Environnement de Test Alfresco</title>
+    <title>Architecture et Environnement de Test Redmine</title>
     <link rel="icon" type="image/png" href="images/alfresco_icon.png" />
 
     <!-- Script de protection d'accès - Vérification de l'authentification -->
@@ -165,6 +165,112 @@
         text-align: center;
       }
 
+      /* === ÉTAPES DE PROCÉDURE === */
+      .step {
+        display: flex;
+        align-items: flex-start;
+        gap: 18px;
+        margin-bottom: 28px;
+      }
+
+      .step-number {
+        background-color: #1e3a8a;
+        color: white;
+        font-weight: 700;
+        font-size: 1.1em;
+        min-width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+
+      .step-content {
+        flex: 1;
+      }
+
+      .step-content h3 {
+        margin-top: 0;
+        margin-bottom: 8px;
+        border-bottom: none;
+        padding-bottom: 0;
+        font-size: 1.15em;
+      }
+
+      /* === BLOCS DE CODE === */
+      pre {
+        background-color: #1e293b;
+        color: #e2e8f0;
+        padding: 16px 20px;
+        border-radius: 6px;
+        overflow-x: auto;
+        font-family: "Courier New", monospace;
+        font-size: 0.9em;
+        line-height: 1.6;
+        margin: 12px 0;
+      }
+
+      pre code {
+        background: none;
+        padding: 0;
+        color: inherit;
+      }
+
+      code {
+        background-color: #f0f4f8;
+        color: #1e3a8a;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: "Courier New", monospace;
+        font-size: 0.9em;
+      }
+
+      .tip {
+        background-color: #e0f2f1;
+        border-left: 5px solid #10b981;
+        padding: 12px 15px;
+        border-radius: 4px;
+        margin-top: 12px;
+        color: #065f46;
+        font-size: 0.92em;
+      }
+
+      .tip strong {
+        color: #10b981;
+      }
+
+      .prereq-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .prereq-list li {
+        padding: 7px 0;
+        border-bottom: 1px dashed #e5e7eb;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .prereq-list li:last-child {
+        border-bottom: none;
+      }
+
+      .prereq-list .badge {
+        background-color: #1e3a8a;
+        color: white;
+        font-size: 0.78em;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 12px;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
       /* ======================================================= */
       /* MEDIA QUERIES pour l'affichage mobile (max-width: 600px)*/
       /* ======================================================= */
@@ -210,6 +316,15 @@
         .tool-list .category {
           min-width: auto;
           margin-bottom: 5px;
+        }
+
+        .step {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .step-number {
+          align-self: flex-start;
         }
       }
       /* ================================== */
@@ -266,63 +381,141 @@
       <h1>Architecture et Environnement de Test Redmine</h1>
 
       <div class="section-card">
-        <h2>Serveur de Test Principal</h2>
-        <p style="font-size: 1.1em; font-weight: 600">
-          Application à tester : Redmine
-          <span style="font-weight: bold; color: #ef4444"
-            >(Version 5.1.1.stable)</span
-          >
+        <h2>Déploiement de votre Instance Redmine (Docker)</h2>
+        <p style="font-size: 1.05em">
+          Chaque étudiant déploie sa <strong>propre instance locale</strong> de
+          <strong>Redmine 5.1.x</strong> via <strong>Docker Compose</strong>,
+          adossée à une base de données <strong>PostgreSQL</strong>.
         </p>
 
-        <h3>Accès et État du Serveur</h3>
-        <ul class="config-list">
-          <li style="background-color: #d1fae5; border-color: #10b981">
-            <span class="key">Statut actuel</span>
-            <span
-              class="value"
-              style="background-color: #10b981; color: white; font-weight: bold"
-              >running</span
-            >
+        <h3>Prérequis</h3>
+        <ul class="prereq-list">
+          <li>
+            <span class="badge">Requis</span>
+            <span><strong>Docker Desktop</strong> (Windows / macOS) ou le moteur Docker sous Linux — installé et en cours d'exécution</span>
           </li>
           <li>
-            <span class="key">Tunnel d'accès (HTTP)</span>
-            <span class="value">205.236.44.131:80</span>
+            <span class="badge">Requis</span>
+            <span><strong>Docker Compose</strong> — intégré par défaut dans Docker Desktop</span>
           </li>
           <li>
-            <span class="key">Session SSH</span>
-            <span class="value">mercure.minilab.bdeb.qc.ca</span>
+            <span class="badge">Requis</span>
+            <span>Un <strong>terminal</strong> : Invite de commandes, PowerShell, ou Terminal Linux/macOS</span>
           </li>
         </ul>
 
-        <h3>Configuration Technique (VM Proxmox)</h3>
-        <ul class="config-list">
-          <li>
-            <span class="key">Processeurs</span>
-            <span class="value">2 (1 sockets, 2 cores) [host]</span>
-          </li>
-          <li>
-            <span class="key">Mémoire Allouée</span>
-            <span class="value">2.00 GiB</span>
-          </li>
-          <li>
-            <span class="key">Utilisation Mémoire Actuelle</span>
-            <span class="value" style="color: #ef4444; font-weight: bold"
-              >38.32% (784.80 Mio)</span
-            >
-          </li>
-          <li>
-            <span class="key">Disque Dur</span>
-            <span class="value">10G (local-lvm:vm-302-disk-0)</span>
-          </li>
-          <li>
-            <span class="key">Contrôleur Réseau/SCSI</span>
-            <span class="value">VirtIO / VirtIO SCSI single</span>
-          </li>
-          <li>
-            <span class="key">Machine/BIOS</span>
-            <span class="value">Default (i440fx) / Default (SeaBIOS)</span>
-          </li>
-        </ul>
+        <h3>Procédure de déploiement</h3>
+
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h3>Création de l'espace de travail</h3>
+            <p>Créez un répertoire dédié au projet, puis placez-vous à l'intérieur :</p>
+<pre><code>mkdir redmine
+cd redmine</code></pre>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h3>Configuration du fichier Docker Compose</h3>
+            <p>
+              Dans le dossier <code>redmine</code>, créez un fichier nommé
+              exactement <code>docker-compose.yml</code> avec le contenu suivant :
+            </p>
+<pre><code>version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: redmine
+      POSTGRES_PASSWORD: Hdjsy@1hrts
+      POSTGRES_DB: redmine
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  web:
+    image: redmine:latest
+    restart: always
+    ports:
+      - "8082:3000"
+    environment:
+      REDMINE_DB_POSTGRES: db
+      REDMINE_DB_USERNAME: redmine
+      REDMINE_DB_PASSWORD: Hdjsy@1hrts
+      REDMINE_DB_DATABASE: redmine
+    volumes:
+      - redmine_data:/usr/src/redmine/files
+    depends_on:
+      - db
+
+volumes:
+  pg_data:
+  redmine_data:</code></pre>
+            <div class="tip">
+              <strong>Notes :</strong>
+              <ul style="margin: 6px 0 0 0; padding-left: 18px;">
+                <li><strong>Ports (8082:3000)</strong> : Redmine écoute sur le port <code>3000</code> dans le conteneur, redirigé vers le port <code>8082</code> de votre machine.</li>
+                <li><strong>Volumes</strong> (<code>pg_data</code> &amp; <code>redmine_data</code>) : assurent la persistance des données entre les redémarrages.</li>
+                <li>Les deux mots de passe doivent être identiques pour que l'application et la base de données puissent communiquer.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h3>Lancement des conteneurs</h3>
+            <p>Depuis le dossier <code>redmine</code>, exécutez :</p>
+<pre><code>docker compose up -d</code></pre>
+            <div class="tip">
+              <strong>Note :</strong> Lors du premier lancement, Redmine peut prendre
+              entre 30 secondes et 1 minute pour s'initialiser (création de la
+              structure de base de données).
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h3>Accès et première connexion</h3>
+            <p>Ouvrez votre navigateur et accédez à :</p>
+<pre><code>http://localhost:8082</code></pre>
+            <p>Connectez-vous avec les identifiants par défaut :</p>
+            <ul class="config-list" style="margin-top: 8px;">
+              <li>
+                <span class="key">Identifiant (Login)</span>
+                <span class="value">admin</span>
+              </li>
+              <li>
+                <span class="key">Mot de passe</span>
+                <span class="value">admin</span>
+              </li>
+            </ul>
+            <div class="note" style="margin-top: 12px;">
+              <strong>Sécurité :</strong> Dès la première connexion, Redmine vous
+              redirigera automatiquement vers un formulaire exigeant la modification
+              immédiate du mot de passe administrateur par défaut.
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">5</div>
+          <div class="step-content">
+            <h3>Validation de l'état (optionnel)</h3>
+            <p>Pour vérifier le statut de vos conteneurs :</p>
+<pre><code>docker compose ps</code></pre>
+            <p>Pour arrêter proprement l'environnement sans supprimer vos données :</p>
+<pre><code>docker compose down</code></pre>
+          </div>
+        </div>
+
       </div>
 
       <div class="section-card">
